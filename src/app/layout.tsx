@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { AdSenseScript } from "@/components/adsense-script";
+import { AnalyticsScripts } from "@/components/analytics-scripts";
+import { SiteFooter } from "@/components/site-footer";
+import { getSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site-config";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -12,13 +17,32 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Car Reliability",
-    template: "%s | Car Reliability",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "Generation-level trust scores, engine picks, and platform risks for used car buyers.",
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "en_AU",
+    url: siteUrl,
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -28,11 +52,14 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="en-AU"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background font-sans text-foreground">
+        <AnalyticsScripts />
+        <AdSenseScript />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

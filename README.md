@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## SEO, analytics, and AdSense
+
+See [`docs/MONETIZATION.md`](docs/MONETIZATION.md) and copy `.env.example` to `.env.local` for `NEXT_PUBLIC_SITE_URL`, GA4, and AdSense variables.
+
 ## Getting Started
 
 First, run the development server:

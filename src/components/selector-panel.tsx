@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { SELECTOR_TREE } from "@/lib/selector-data";
@@ -130,6 +131,13 @@ export function SelectorPanel() {
       >
         {isPending ? "LOADING…" : "GENERATE REPORT"}
       </button>
+
+      <p className="mt-6 text-center text-sm text-foreground/90">
+        Prefer browsing?{" "}
+        <Link href="/used-car-reliability" className="font-semibold underline underline-offset-4">
+          Used car reliability guides by make
+        </Link>
+      </p>
     </form>
   );
 }
