@@ -1,9 +1,13 @@
 import type { NextConfig } from "next";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Lock Turbopack resolution to this app folder (not a parent path or accidental cwd).
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
-  // Anchor Turbopack to the project root (use cwd so config resolution matches Vercel builds).
   turbopack: {
-    root: process.cwd(),
+    root: projectRoot,
   },
 };
 

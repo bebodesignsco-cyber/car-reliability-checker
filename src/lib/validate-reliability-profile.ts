@@ -13,6 +13,7 @@ export function validateReliabilityProfile(data: unknown): ReliabilityProfile | 
     if (Number.isFinite(n)) trustScore = n;
   }
   if (typeof trustScore !== "number" || trustScore < 0 || trustScore > 100) return null;
+  const yearsRange = o.yearsRange;
   if (typeof yearsRange !== "string" || yearsRange.length === 0) return null;
 
   const rec = o.recommendedConfigurations;
