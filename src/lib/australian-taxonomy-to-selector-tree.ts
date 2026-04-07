@@ -53,6 +53,22 @@ function resolveGenerationsForModel(
   return [{ ...DEFAULT_GENERATION }];
 }
 
+/** True when the model has no series DB row and only the "All variants" fallback. */
+export function isPlaceholderGenerationOnly(
+  generations: SelectorGeneration[],
+): boolean {
+  return (
+    generations.length === 1 &&
+    generations[0]!.slug === DEFAULT_GENERATION.slug &&
+    generations[0]!.label === DEFAULT_GENERATION.label
+  );
+}
+
+/** True when at least one model under this make has real series / generation options. */
+export function makeHasAnyModelSeriesData(make: SelectorMake): boolean {
+  return make.models.some((m) => !isPlaceholderGenerationOnly(m.generations));
+}
+
 /**
  * Build the selector tree from `public/australian_car_taxonomy.json` and
  * `public/australian_model_series.json` (per-model series / chassis codes).
