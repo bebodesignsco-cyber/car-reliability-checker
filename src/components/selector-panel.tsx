@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { SELECTOR_TREE } from "@/lib/selector-data";
 
 export function SelectorPanel() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [makeSlug, setMakeSlug] = useState("");
   const [modelSlug, setModelSlug] = useState("");
   const [generationSlug, setGenerationSlug] = useState("");
@@ -38,8 +39,10 @@ export function SelectorPanel() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSubmit) return;
-    router.push(`/${make!.slug}/${model!.slug}/${generation!.slug}`);
+    if (!canSubmit || isPending) return;
+    startTransition(() => {
+      router.push(`/${make!.slug}/${model!.slug}/${generation!.slug}`);
+    });
   }
 
   return (
@@ -121,10 +124,11 @@ export function SelectorPanel() {
 
       <button
         type="submit"
-        disabled={!canSubmit}
+        disabled={!canSubmit || isPending}
+        aria-busy={isPending}
         className="mt-6 h-16 w-full border-2 border-foreground bg-foreground text-sm font-bold uppercase tracking-wide text-background disabled:cursor-not-allowed disabled:opacity-40"
       >
-        GENERATE REPORT
+        {isPending ? "LOADING…" : "GENERATE REPORT"}
       </button>
     </form>
   );
