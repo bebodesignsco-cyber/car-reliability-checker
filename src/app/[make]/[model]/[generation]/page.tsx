@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReliabilityColumn } from "@/components/reliability-column";
 import { ReportFooter } from "@/components/report-footer";
@@ -37,6 +38,14 @@ export default async function GenerationReliabilityPage({ params }: PageProps) {
   if (loaded.kind === "error") {
     return (
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-10 sm:px-6 sm:py-14 md:px-8 md:py-16">
+        <p>
+          <Link
+            href="/"
+            className="inline-flex w-fit items-center border-2 border-foreground bg-background px-4 py-3 text-xs font-bold uppercase tracking-wide text-foreground no-underline hover:bg-foreground hover:text-background"
+          >
+            Back to selector
+          </Link>
+        </p>
         <p className="text-base leading-relaxed text-foreground">{loaded.message}</p>
       </main>
     );
@@ -57,6 +66,14 @@ export default async function GenerationReliabilityPage({ params }: PageProps) {
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 sm:py-14 md:gap-12 md:px-8 md:py-16">
+      <p>
+        <Link
+          href="/"
+          className="inline-flex w-fit items-center border-2 border-foreground bg-background px-4 py-3 text-xs font-bold uppercase tracking-wide text-foreground no-underline hover:bg-foreground hover:text-background"
+        >
+          Back to selector
+        </Link>
+      </p>
       {hero ? (
         <ReportScrollRotateHero images={hero.images} alt={hero.alt} />
       ) : null}
