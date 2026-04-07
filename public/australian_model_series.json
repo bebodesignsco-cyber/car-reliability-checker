@@ -37,6 +37,514 @@
         "label": "G80",
         "years": "2021-2026"
       }
+    ],
+    "1 Series": [
+      {
+        "label": "E81",
+        "years": "—"
+      },
+      {
+        "label": "E87",
+        "years": "—"
+      },
+      {
+        "label": "E82",
+        "years": "—"
+      },
+      {
+        "label": "E88",
+        "years": "—"
+      },
+      {
+        "label": "F20",
+        "years": "—"
+      },
+      {
+        "label": "F21",
+        "years": "—"
+      },
+      {
+        "label": "F40",
+        "years": "—"
+      },
+      {
+        "label": "F70",
+        "years": "—"
+      }
+    ],
+    "2 Series": [
+      {
+        "label": "F22",
+        "years": "—"
+      },
+      {
+        "label": "F87",
+        "years": "—"
+      },
+      {
+        "label": "G42",
+        "years": "—"
+      },
+      {
+        "label": "F45",
+        "years": "—"
+      },
+      {
+        "label": "U06",
+        "years": "—"
+      },
+      {
+        "label": "F44",
+        "years": "—"
+      },
+      {
+        "label": "F74",
+        "years": "—"
+      }
+    ],
+    "4 Series": [
+      {
+        "label": "F32",
+        "years": "—"
+      },
+      {
+        "label": "F33",
+        "years": "—"
+      },
+      {
+        "label": "F36",
+        "years": "—"
+      },
+      {
+        "label": "G22",
+        "years": "—"
+      },
+      {
+        "label": "G23",
+        "years": "—"
+      },
+      {
+        "label": "G26",
+        "years": "—"
+      }
+    ],
+    "5 Series": [
+      {
+        "label": "E12",
+        "years": "—"
+      },
+      {
+        "label": "E28",
+        "years": "—"
+      },
+      {
+        "label": "E34",
+        "years": "—"
+      },
+      {
+        "label": "E39",
+        "years": "—"
+      },
+      {
+        "label": "E60",
+        "years": "—"
+      },
+      {
+        "label": "E61",
+        "years": "—"
+      },
+      {
+        "label": "F10",
+        "years": "—"
+      },
+      {
+        "label": "F11",
+        "years": "—"
+      },
+      {
+        "label": "F07",
+        "years": "—"
+      },
+      {
+        "label": "F18",
+        "years": "—"
+      },
+      {
+        "label": "G30",
+        "years": "—"
+      },
+      {
+        "label": "G31",
+        "years": "—"
+      },
+      {
+        "label": "G38",
+        "years": "—"
+      },
+      {
+        "label": "G60",
+        "years": "—"
+      },
+      {
+        "label": "G61",
+        "years": "—"
+      },
+      {
+        "label": "G68",
+        "years": "—"
+      }
+    ],
+    "7 Series": [
+      {
+        "label": "E23",
+        "years": "—"
+      },
+      {
+        "label": "E32",
+        "years": "—"
+      },
+      {
+        "label": "E38",
+        "years": "—"
+      },
+      {
+        "label": "E65",
+        "years": "—"
+      },
+      {
+        "label": "E66",
+        "years": "—"
+      },
+      {
+        "label": "E67",
+        "years": "—"
+      },
+      {
+        "label": "E68",
+        "years": "—"
+      },
+      {
+        "label": "F01",
+        "years": "—"
+      },
+      {
+        "label": "F02",
+        "years": "—"
+      },
+      {
+        "label": "F03",
+        "years": "—"
+      },
+      {
+        "label": "F04",
+        "years": "—"
+      },
+      {
+        "label": "G11",
+        "years": "—"
+      },
+      {
+        "label": "G12",
+        "years": "—"
+      },
+      {
+        "label": "G70",
+        "years": "—"
+      },
+      {
+        "label": "G73",
+        "years": "—"
+      }
+    ],
+    "8 Series": [
+      {
+        "label": "E31",
+        "years": "—"
+      },
+      {
+        "label": "G14",
+        "years": "—"
+      },
+      {
+        "label": "G15",
+        "years": "—"
+      },
+      {
+        "label": "G16",
+        "years": "—"
+      }
+    ],
+    "I4": [
+      {
+        "label": "G26",
+        "years": "—"
+      }
+    ],
+    "I5": [
+      {
+        "label": "G60",
+        "years": "—"
+      }
+    ],
+    "I7": [
+      {
+        "label": "G70",
+        "years": "—"
+      }
+    ],
+    "Ix": [
+      {
+        "label": "I20",
+        "years": "—"
+      }
+    ],
+    "Ix1": [
+      {
+        "label": "U11",
+        "years": "—"
+      }
+    ],
+    "Ix2": [
+      {
+        "label": "U10",
+        "years": "—"
+      }
+    ],
+    "Ix3": [
+      {
+        "label": "G08",
+        "years": "—"
+      }
+    ],
+    "M2": [
+      {
+        "label": "F87",
+        "years": "—"
+      },
+      {
+        "label": "G87",
+        "years": "—"
+      }
+    ],
+    "M3": [
+      {
+        "label": "E30",
+        "years": "—"
+      },
+      {
+        "label": "E36",
+        "years": "—"
+      },
+      {
+        "label": "E46",
+        "years": "—"
+      },
+      {
+        "label": "E90",
+        "years": "—"
+      },
+      {
+        "label": "E92",
+        "years": "—"
+      },
+      {
+        "label": "E93",
+        "years": "—"
+      },
+      {
+        "label": "F80",
+        "years": "—"
+      },
+      {
+        "label": "G80",
+        "years": "—"
+      },
+      {
+        "label": "G81",
+        "years": "—"
+      }
+    ],
+    "M4": [
+      {
+        "label": "F82",
+        "years": "—"
+      },
+      {
+        "label": "F83",
+        "years": "—"
+      },
+      {
+        "label": "G82",
+        "years": "—"
+      },
+      {
+        "label": "G83",
+        "years": "—"
+      }
+    ],
+    "M5": [
+      {
+        "label": "E28",
+        "years": "—"
+      },
+      {
+        "label": "E34",
+        "years": "—"
+      },
+      {
+        "label": "E39",
+        "years": "—"
+      },
+      {
+        "label": "E60",
+        "years": "—"
+      },
+      {
+        "label": "E61",
+        "years": "—"
+      },
+      {
+        "label": "F10",
+        "years": "—"
+      },
+      {
+        "label": "F90",
+        "years": "—"
+      }
+    ],
+    "X1": [
+      {
+        "label": "E84",
+        "years": "—"
+      },
+      {
+        "label": "F48",
+        "years": "—"
+      },
+      {
+        "label": "F49",
+        "years": "—"
+      },
+      {
+        "label": "U11",
+        "years": "—"
+      },
+      {
+        "label": "U12",
+        "years": "—"
+      }
+    ],
+    "X2": [
+      {
+        "label": "F39",
+        "years": "—"
+      },
+      {
+        "label": "U10",
+        "years": "—"
+      }
+    ],
+    "X3": [
+      {
+        "label": "E83",
+        "years": "—"
+      },
+      {
+        "label": "F25",
+        "years": "—"
+      },
+      {
+        "label": "G01",
+        "years": "—"
+      },
+      {
+        "label": "G45",
+        "years": "—"
+      }
+    ],
+    "X4": [
+      {
+        "label": "F26",
+        "years": "—"
+      },
+      {
+        "label": "G02",
+        "years": "—"
+      }
+    ],
+    "X5": [
+      {
+        "label": "E53",
+        "years": "—"
+      },
+      {
+        "label": "E70",
+        "years": "—"
+      },
+      {
+        "label": "F15",
+        "years": "—"
+      },
+      {
+        "label": "F85",
+        "years": "—"
+      },
+      {
+        "label": "G05",
+        "years": "—"
+      },
+      {
+        "label": "G18",
+        "years": "—"
+      },
+      {
+        "label": "F95",
+        "years": "—"
+      }
+    ],
+    "X6": [
+      {
+        "label": "E71",
+        "years": "—"
+      },
+      {
+        "label": "F16",
+        "years": "—"
+      },
+      {
+        "label": "G06",
+        "years": "—"
+      }
+    ],
+    "X7": [
+      {
+        "label": "G07",
+        "years": "—"
+      }
+    ],
+    "Xm": [
+      {
+        "label": "G09",
+        "years": "—"
+      }
+    ],
+    "Z4": [
+      {
+        "label": "E85",
+        "years": "—"
+      },
+      {
+        "label": "E86",
+        "years": "—"
+      },
+      {
+        "label": "E89",
+        "years": "—"
+      },
+      {
+        "label": "G29",
+        "years": "—"
+      }
     ]
   },
   "Volvo": {
@@ -48,6 +556,398 @@
       {
         "label": "SPA",
         "years": "2015-2026"
+      }
+    ],
+    "Es90": [
+      {
+        "label": "V536",
+        "years": "—"
+      }
+    ],
+    "Ex30": [
+      {
+        "label": "V216",
+        "years": "—"
+      }
+    ],
+    "Ex30 Cross Country": [
+      {
+        "label": "V216",
+        "years": "—"
+      }
+    ],
+    "Ex40": [
+      {
+        "label": "CMA",
+        "years": "—"
+      }
+    ],
+    "Ex90": [
+      {
+        "label": "SPA2",
+        "years": "—"
+      }
+    ],
+    "Xc40": [
+      {
+        "label": "CMA",
+        "years": "—"
+      }
+    ],
+    "Xc60": [
+      {
+        "label": "SPA",
+        "years": "—"
+      }
+    ]
+  },
+  "Ford": {
+    "E Transit": [
+      {
+        "label": "V363",
+        "years": "—"
+      }
+    ],
+    "E Transit Custom": [
+      {
+        "label": "V710",
+        "years": "—"
+      }
+    ],
+    "F 150": [
+      {
+        "label": "P415",
+        "years": "—"
+      },
+      {
+        "label": "P702",
+        "years": "—"
+      }
+    ],
+    "Mustang Mach E": [
+      {
+        "label": "CX727",
+        "years": "—"
+      }
+    ],
+    "Ranger Super Duty": [
+      {
+        "label": "P703",
+        "years": "—"
+      }
+    ],
+    "Tourneo": [
+      {
+        "label": "V362",
+        "years": "—"
+      },
+      {
+        "label": "V710",
+        "years": "—"
+      }
+    ],
+    "Transit": [
+      {
+        "label": "V347",
+        "years": "—"
+      },
+      {
+        "label": "V348",
+        "years": "—"
+      },
+      {
+        "label": "V363",
+        "years": "—"
+      }
+    ],
+    "Transit Custom": [
+      {
+        "label": "V362",
+        "years": "—"
+      },
+      {
+        "label": "V710",
+        "years": "—"
+      }
+    ]
+  },
+  "Hyundai": {
+    "Elexio": [
+      {
+        "label": "OV",
+        "years": "—"
+      }
+    ],
+    "Inster": [
+      {
+        "label": "AX1 EV",
+        "years": "—"
+      }
+    ],
+    "Ioniq 5": [
+      {
+        "label": "NE",
+        "years": "—"
+      }
+    ],
+    "Ioniq 6": [
+      {
+        "label": "CE",
+        "years": "—"
+      }
+    ],
+    "Ioniq 9": [
+      {
+        "label": "ME",
+        "years": "—"
+      }
+    ],
+    "Staria Load": [
+      {
+        "label": "US4",
+        "years": "—"
+      }
+    ]
+  },
+  "Kia": {
+    "Ev3": [
+      {
+        "label": "SV",
+        "years": "—"
+      }
+    ],
+    "Ev4": [
+      {
+        "label": "CT",
+        "years": "—"
+      }
+    ],
+    "Ev5": [
+      {
+        "label": "OV",
+        "years": "—"
+      }
+    ],
+    "Ev6": [
+      {
+        "label": "CV",
+        "years": "—"
+      }
+    ],
+    "Ev9": [
+      {
+        "label": "MV",
+        "years": "—"
+      }
+    ],
+    "K4": [
+      {
+        "label": "CL4",
+        "years": "—"
+      }
+    ],
+    "Stonic": [
+      {
+        "label": "YB",
+        "years": "—"
+      }
+    ],
+    "Tasman": [
+      {
+        "label": "TK",
+        "years": "—"
+      }
+    ]
+  },
+  "Mazda": {
+    "6E": [
+      {
+        "label": "J90A",
+        "years": "—"
+      }
+    ],
+    "Cx 3": [
+      {
+        "label": "DK",
+        "years": "—"
+      }
+    ],
+    "Cx 30": [
+      {
+        "label": "DM",
+        "years": "—"
+      }
+    ],
+    "Cx 60": [
+      {
+        "label": "KH",
+        "years": "—"
+      }
+    ],
+    "Cx 70": [
+      {
+        "label": "KD",
+        "years": "—"
+      }
+    ],
+    "Cx 80": [
+      {
+        "label": "KL",
+        "years": "—"
+      }
+    ],
+    "Cx 90": [
+      {
+        "label": "KK",
+        "years": "—"
+      }
+    ]
+  },
+  "Toyota": {
+    "Bz4X": [
+      {
+        "label": "EA10",
+        "years": "—"
+      }
+    ],
+    "Camry": [
+      {
+        "label": "XV50",
+        "years": "—"
+      },
+      {
+        "label": "XV70",
+        "years": "—"
+      },
+      {
+        "label": "XV80",
+        "years": "—"
+      }
+    ],
+    "Corolla Cross": [
+      {
+        "label": "XG10",
+        "years": "—"
+      }
+    ],
+    "Landcruiser": [
+      {
+        "label": "J70",
+        "years": "—"
+      },
+      {
+        "label": "J100",
+        "years": "—"
+      },
+      {
+        "label": "J200",
+        "years": "—"
+      },
+      {
+        "label": "J300",
+        "years": "—"
+      }
+    ],
+    "Landcruiser Prado": [
+      {
+        "label": "J120",
+        "years": "—"
+      },
+      {
+        "label": "J150",
+        "years": "—"
+      },
+      {
+        "label": "J250",
+        "years": "—"
+      }
+    ],
+    "Tundra": [
+      {
+        "label": "XK50",
+        "years": "—"
+      },
+      {
+        "label": "XK70",
+        "years": "—"
+      }
+    ],
+    "Yaris": [
+      {
+        "label": "XP90",
+        "years": "—"
+      },
+      {
+        "label": "XP130",
+        "years": "—"
+      },
+      {
+        "label": "XP210",
+        "years": "—"
+      }
+    ],
+    "Yaris Cross": [
+      {
+        "label": "XP210",
+        "years": "—"
+      }
+    ]
+  },
+  "Volkswagen": {
+    "E Transporter": [
+      {
+        "label": "T7",
+        "years": "—"
+      }
+    ],
+    "Id 4": [
+      {
+        "label": "E21",
+        "years": "—"
+      }
+    ],
+    "Id 5": [
+      {
+        "label": "E39",
+        "years": "—"
+      }
+    ],
+    "Id Buzz": [
+      {
+        "label": "EB",
+        "years": "—"
+      }
+    ],
+    "Id Buzz Cargo": [
+      {
+        "label": "EB",
+        "years": "—"
+      }
+    ],
+    "Multivan": [
+      {
+        "label": "T7",
+        "years": "—"
+      }
+    ],
+    "T Cross": [
+      {
+        "label": "C11",
+        "years": "—"
+      }
+    ],
+    "Transporter": [
+      {
+        "label": "T5",
+        "years": "—"
+      },
+      {
+        "label": "T6",
+        "years": "—"
+      },
+      {
+        "label": "T7",
+        "years": "—"
       }
     ]
   }

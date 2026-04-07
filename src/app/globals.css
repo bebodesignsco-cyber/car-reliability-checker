@@ -1,4 +1,5 @@
-@import "tailwindcss";
+/* Bare "tailwindcss" resolves from the wrong cwd when a package.json exists higher in the tree. */
+@import "../../node_modules/tailwindcss/index.css";
 
 :root {
   --background: #ffffff;
