@@ -52,7 +52,7 @@ export async function loadReliabilityReport(
       };
       await writeCachedReport(makeSlug, modelSlug, generationSlug, report);
       return { kind: "ok", report };
-    } catch {
+    } catch (e) {
       if (cached) {
         return {
           kind: "ok",
@@ -63,10 +63,15 @@ export async function loadReliabilityReport(
       if (mock) {
         return { kind: "ok", report: cachedFromMock(mock) };
       }
+      const detail = e instanceof Error ? e.message : String(e);
+      const quotaHint =
+        /429|RESOURCE_EXHAUSTED|quota|rate limit/i.test(detail) &&
+        !/GEMINI_API_KEY is not set/.test(detail)
+          ? " Gemini returned a quota or rate limit error; check billing or try again later."
+          : "";
       return {
         kind: "error",
-        message:
-          "Could not generate a reliability report. Check GEMINI_API_KEY and try again later.",
+        message: `Could not generate a reliability report.${quotaHint} If this persists, confirm GEMINI_API_KEY and optional GEMINI_MODEL in the server environment.`,
       };
     }
   }

@@ -7,8 +7,11 @@ function isStringArray(x: unknown): x is string[] {
 export function validateReliabilityProfile(data: unknown): ReliabilityProfile | null {
   if (typeof data !== "object" || data === null) return null;
   const o = data as Record<string, unknown>;
-  const trustScore = o.trustScore;
-  const yearsRange = o.yearsRange;
+  let trustScore: unknown = o.trustScore;
+  if (typeof trustScore === "string") {
+    const n = Number(trustScore.trim());
+    if (Number.isFinite(n)) trustScore = n;
+  }
   if (typeof trustScore !== "number" || trustScore < 0 || trustScore > 100) return null;
   if (typeof yearsRange !== "string" || yearsRange.length === 0) return null;
 

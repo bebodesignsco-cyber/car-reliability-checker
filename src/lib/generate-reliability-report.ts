@@ -6,10 +6,21 @@ import type { ResolvedSelectorContext } from "@/lib/selector-resolve";
 import { validateReliabilityProfile } from "@/lib/validate-reliability-profile";
 
 /** Gemini API: Google Search grounding cannot be combined with controlled JSON (mime + schema). */
-const DEFAULT_MODEL = "gemini-2.0-flash";
+const DEFAULT_MODEL = "gemini-2.5-flash";
 
-function getGeminiModel(): string {
-  return process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL;
+/**
+ * If the primary model has no quota (common for deprecated IDs) or errors, try these in order.
+ * See https://ai.google.dev/gemini-api/docs/models
+ */
+const MODEL_FALLBACKS = ["gemini-2.5-flash-lite", "gemini-2.0-flash"] as const;
+
+function modelCandidates(): string[] {
+  const primary = process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL;
+  const out: string[] = [primary];
+  for (const m of MODEL_FALLBACKS) {
+    if (!out.includes(m)) out.push(m);
+  }
+  return out;
 }
 
 function extractJsonObject(text: string): string {
@@ -112,52 +123,64 @@ export async function generateReliabilityReportWithGrounding(
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  const model = getGeminiModel();
+  let lastError: unknown;
 
-  // Grounding + controlled JSON are mutually exclusive on the Gemini API ("Controlled generation is not supported with Google_search tool").
-  try {
-    const grounded = await ai.models.generateContent({
-      model,
-      contents: buildGroundedPrompt(ctx),
-      config: {
-        temperature: 0.35,
-        tools: [{ googleSearch: {} }],
-      },
-    });
+  for (const model of modelCandidates()) {
+    // Grounding + controlled JSON are mutually exclusive on the Gemini API ("Controlled generation is not supported with Google_search tool").
+    try {
+      const grounded = await ai.models.generateContent({
+        model,
+        contents: buildGroundedPrompt(ctx),
+        config: {
+          temperature: 0.35,
+          tools: [{ googleSearch: {} }],
+        },
+      });
 
-    const groundedText = grounded.text;
-    if (groundedText) {
-      try {
-        const profile = parseProfileJson(groundedText);
-        const sources = extractSourcesFromResponse(
-          grounded as {
-            candidates?: { groundingMetadata?: { groundingChunks?: { web?: { title?: string; uri?: string } }[] } }[];
-          },
-        );
-        return { profile, sources };
-      } catch {
-        // Fall through to structured-only generation
+      const groundedText = grounded.text;
+      if (groundedText) {
+        try {
+          const profile = parseProfileJson(groundedText);
+          const sources = extractSourcesFromResponse(
+            grounded as {
+              candidates?: { groundingMetadata?: { groundingChunks?: { web?: { title?: string; uri?: string } }[] } }[];
+            },
+          );
+          return { profile, sources };
+        } catch {
+          // Fall through to structured-only generation on this model
+        }
       }
+    } catch (e) {
+      lastError = e;
+      // Grounded request failed (quota, tool unsupported, etc.) — try structured output without search.
     }
-  } catch {
-    // Grounded request failed (e.g. tool unsupported) — try structured output without search.
+
+    try {
+      const structured = await ai.models.generateContent({
+        model,
+        contents: buildStructuredOnlyPrompt(ctx),
+        config: {
+          temperature: 0.35,
+          responseMimeType: "application/json",
+          responseJsonSchema: RELIABILITY_PROFILE_JSON_SCHEMA,
+        },
+      });
+
+      const structuredText = structured.text;
+      if (!structuredText) {
+        throw new Error("Empty response from Gemini");
+      }
+
+      const profile = parseProfileJson(structuredText);
+      return { profile, sources: [] };
+    } catch (e) {
+      lastError = e;
+    }
   }
 
-  const structured = await ai.models.generateContent({
-    model,
-    contents: buildStructuredOnlyPrompt(ctx),
-    config: {
-      temperature: 0.35,
-      responseMimeType: "application/json",
-      responseJsonSchema: RELIABILITY_PROFILE_JSON_SCHEMA,
-    },
-  });
-
-  const structuredText = structured.text;
-  if (!structuredText) {
-    throw new Error("Empty response from Gemini");
+  if (lastError instanceof Error) {
+    throw lastError;
   }
-
-  const profile = parseProfileJson(structuredText);
-  return { profile, sources: [] };
+  throw new Error(lastError != null ? String(lastError) : "Gemini report generation failed");
 }
