@@ -50,7 +50,14 @@ export async function loadReliabilityReport(
         sources,
         staleServed: false,
       };
-      await writeCachedReport(makeSlug, modelSlug, generationSlug, report);
+      try {
+        await writeCachedReport(makeSlug, modelSlug, generationSlug, report);
+      } catch (cacheErr) {
+        console.error(
+          "[reliability] Failed to persist report cache (report still shown):",
+          cacheErr instanceof Error ? cacheErr.message : cacheErr,
+        );
+      }
       return { kind: "ok", report };
     } catch (e) {
       if (cached) {
@@ -64,6 +71,7 @@ export async function loadReliabilityReport(
         return { kind: "ok", report: cachedFromMock(mock) };
       }
       const detail = e instanceof Error ? e.message : String(e);
+      console.error("[reliability] Gemini report generation failed:", detail);
       const quotaHint =
         /429|RESOURCE_EXHAUSTED|quota|rate limit/i.test(detail) &&
         !/GEMINI_API_KEY is not set/.test(detail)

@@ -1,12 +1,13 @@
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import type { CachedReliabilityReport } from "@/types";
 
 /**
- * Filesystem JSON cache under `data/reliability-reports/`.
- * On typical serverless hosts the filesystem is ephemeral; use a durable store (e.g. Blob, KV, DB)
- * if you need persistence across deployments.
+ * Filesystem JSON cache under `data/reliability-reports/` locally.
+ * On Vercel, the project directory is not writable; cache uses the OS temp dir (ephemeral per instance).
+ * Override with RELIABILITY_REPORT_CACHE_DIR. For durable cache across deploys, use Blob/KV/DB.
  */
 export const REPORT_CACHE_SCHEMA_VERSION = 1;
 
@@ -14,6 +15,11 @@ export const REPORT_CACHE_SCHEMA_VERSION = 1;
 export const REPORT_STALE_MS = 30 * 24 * 60 * 60 * 1000;
 
 function cacheRoot(): string {
+  const override = process.env.RELIABILITY_REPORT_CACHE_DIR?.trim();
+  if (override) return override;
+  if (process.env.VERCEL) {
+    return join(tmpdir(), "car-reliability-reports");
+  }
   return join(process.cwd(), "data", "reliability-reports");
 }
 
