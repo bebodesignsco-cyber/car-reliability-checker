@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { AdSenseDisplay } from "@/components/adsense-display";
 import { PillarJsonLd } from "@/components/pillar-json-ld";
 import { SELECTOR_TREE } from "@/lib/selector-data";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site-config";
@@ -24,8 +23,6 @@ export const metadata: Metadata = {
 };
 
 export default function UsedCarReliabilityPillarPage() {
-  const pillarSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_PILLAR?.trim();
-
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 sm:py-14 md:py-16">
       <PillarJsonLd />
@@ -46,12 +43,6 @@ export default function UsedCarReliabilityPillarPage() {
           </Link>
         </p>
       </header>
-
-      {pillarSlot ? (
-        <div className="w-full">
-          <AdSenseDisplay slot={pillarSlot} />
-        </div>
-      ) : null}
 
       <section aria-labelledby="makes-heading">
         <h2

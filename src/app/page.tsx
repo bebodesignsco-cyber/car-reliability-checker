@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { AdSenseDisplay } from "@/components/adsense-display";
 import { HomeJsonLd } from "@/components/json-ld";
 import { SelectorPanel } from "@/components/selector-panel";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site-config";
@@ -22,8 +21,6 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  const homeSlot = process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME?.trim();
-
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 sm:py-14 md:py-16">
       <HomeJsonLd />
@@ -40,12 +37,6 @@ export default function Home() {
           </Link>
         </p>
       </header>
-
-      {homeSlot ? (
-        <div className="w-full">
-          <AdSenseDisplay slot={homeSlot} />
-        </div>
-      ) : null}
 
       <SelectorPanel />
     </main>

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { ADSENSE_PUBLISHER_ID } from "@/lib/ads-config";
+
 declare global {
   interface Window {
     adsbygoogle?: Record<string, unknown>[];
@@ -11,6 +13,9 @@ declare global {
 type AdSenseDisplayProps = {
   /** Ad unit slot ID from Google AdSense. */
   slot: string;
+  /** Fixed size (e.g. leaderboard 728×90). Omit for responsive auto format. */
+  width?: number;
+  height?: number;
   /** Optional min-height to reduce CLS while the slot resolves. */
   className?: string;
 };
@@ -18,34 +23,50 @@ type AdSenseDisplayProps = {
 /**
  * Single display ad unit. Push runs after mount; script is loaded by `AdSenseScript` in root layout.
  */
-export function AdSenseDisplay({ slot, className = "" }: AdSenseDisplayProps) {
-  const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID?.trim();
+export function AdSenseDisplay({
+  slot,
+  width,
+  height,
+  className = "",
+}: AdSenseDisplayProps) {
   const insRef = useRef<HTMLModElement>(null);
+  const fixed = width != null && height != null;
 
   useEffect(() => {
-    if (!client || !slot || !insRef.current) return;
+    if (!ADSENSE_PUBLISHER_ID || !slot || !insRef.current) return;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {
       /* ignore fill errors in dev or ad blockers */
     }
-  }, [client, slot]);
+  }, [slot]);
 
-  if (!client || !slot) return null;
+  if (!ADSENSE_PUBLISHER_ID || !slot) return null;
+
+  const minH = fixed ? height : 120;
 
   return (
     <div
-      className={`min-h-[120px] w-full max-w-full overflow-hidden ${className}`}
+      className={`w-full max-w-full overflow-hidden ${fixed ? "" : "min-h-[120px]"} ${className}`}
+      style={fixed ? { minHeight: minH } : undefined}
       aria-hidden
     >
       <ins
         ref={insRef}
         className="adsbygoogle"
-        style={{ display: "block" }}
-        data-ad-client={client}
+        style={
+          fixed
+            ? { display: "inline-block", width, height }
+            : { display: "block" }
+        }
+        data-ad-client={ADSENSE_PUBLISHER_ID}
         data-ad-slot={slot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
+        {...(fixed
+          ? {}
+          : {
+              "data-ad-format": "auto" as const,
+              "data-full-width-responsive": "true" as const,
+            })}
       />
     </div>
   );

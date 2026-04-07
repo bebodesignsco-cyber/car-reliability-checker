@@ -5,6 +5,7 @@ import "./globals.css";
 import { AdSenseScript } from "@/components/adsense-script";
 import { AnalyticsScripts } from "@/components/analytics-scripts";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteLeaderboard } from "@/components/site-leaderboard";
 import { getSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site-config";
 
 const geistSans = Geist({
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-background font-sans text-foreground">
         <AnalyticsScripts />
         <AdSenseScript />
+        <SiteLeaderboard />
         {children}
         <SiteFooter />
       </body>
