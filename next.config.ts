@@ -1,13 +1,9 @@
 import type { NextConfig } from "next";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
-  // Keep Turbopack anchored to this app when multiple lockfiles exist (e.g. parent dir).
+  // Anchor Turbopack to the project root (use cwd so config resolution matches Vercel builds).
   turbopack: {
-    root: projectRoot,
+    root: process.cwd(),
   },
 };
 

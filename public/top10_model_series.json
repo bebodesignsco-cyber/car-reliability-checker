@@ -1,0 +1,948 @@
+{
+  "Toyota": {
+    "Corolla": [
+      {
+        "label": "E10",
+        "years": "—"
+      },
+      {
+        "label": "E20",
+        "years": "—"
+      },
+      {
+        "label": "E30",
+        "years": "—"
+      },
+      {
+        "label": "E70",
+        "years": "—"
+      },
+      {
+        "label": "E80",
+        "years": "—"
+      },
+      {
+        "label": "E90",
+        "years": "—"
+      },
+      {
+        "label": "E100",
+        "years": "—"
+      },
+      {
+        "label": "E110",
+        "years": "—"
+      },
+      {
+        "label": "E120, E130",
+        "years": "—"
+      },
+      {
+        "label": "E140, E150",
+        "years": "—"
+      },
+      {
+        "label": "E160",
+        "years": "—"
+      },
+      {
+        "label": "E210",
+        "years": "—"
+      }
+    ],
+    "C Hr": [
+      {
+        "label": "AX10/AX50",
+        "years": "—"
+      },
+      {
+        "label": "AX20",
+        "years": "—"
+      },
+      {
+        "label": "2025",
+        "years": "—"
+      }
+    ],
+    "Gr86": [
+      {
+        "label": "ZN6/ZC6",
+        "years": "—"
+      },
+      {
+        "label": "ZN8/ZD8",
+        "years": "—"
+      }
+    ],
+    "Hiace": [
+      {
+        "label": "H10",
+        "years": "—"
+      },
+      {
+        "label": "H11/H20/H30/H40",
+        "years": "—"
+      },
+      {
+        "label": "H50/H60/H70/H80/H90",
+        "years": "—"
+      },
+      {
+        "label": "H100",
+        "years": "—"
+      },
+      {
+        "label": "H200",
+        "years": "—"
+      },
+      {
+        "label": "H300",
+        "years": "—"
+      }
+    ],
+    "Hilux": [
+      {
+        "label": "N10",
+        "years": "—"
+      },
+      {
+        "label": "N20",
+        "years": "—"
+      },
+      {
+        "label": "N30, N40",
+        "years": "—"
+      },
+      {
+        "label": "N50, N60, N70",
+        "years": "—"
+      },
+      {
+        "label": "N80",
+        "years": "—"
+      },
+      {
+        "label": "N140",
+        "years": "—"
+      },
+      {
+        "label": "AN10",
+        "years": "—"
+      },
+      {
+        "label": "AN110",
+        "years": "—"
+      },
+      {
+        "label": "AN220, AN230",
+        "years": "—"
+      },
+      {
+        "label": "2023",
+        "years": "—"
+      }
+    ],
+    "Kluger": [
+      {
+        "label": "XU20",
+        "years": "—"
+      },
+      {
+        "label": "XU40",
+        "years": "—"
+      },
+      {
+        "label": "2007",
+        "years": "—"
+      },
+      {
+        "label": "XU50",
+        "years": "—"
+      },
+      {
+        "label": "XU70",
+        "years": "—"
+      },
+      {
+        "label": "2026",
+        "years": "—"
+      }
+    ],
+    "Rav4": [
+      {
+        "label": "XA10",
+        "years": "—"
+      },
+      {
+        "label": "XA20",
+        "years": "—"
+      },
+      {
+        "label": "2003",
+        "years": "—"
+      },
+      {
+        "label": "XA30",
+        "years": "—"
+      },
+      {
+        "label": "XA40",
+        "years": "—"
+      },
+      {
+        "label": "2015",
+        "years": "—"
+      },
+      {
+        "label": "2013",
+        "years": "—"
+      },
+      {
+        "label": "XA50",
+        "years": "—"
+      },
+      {
+        "label": "XA60",
+        "years": "—"
+      }
+    ]
+  },
+  "Ford": {
+    "Mustang": [
+      {
+        "label": "1965",
+        "years": "—"
+      },
+      {
+        "label": "1974",
+        "years": "—"
+      },
+      {
+        "label": "1979",
+        "years": "—"
+      },
+      {
+        "label": "SN95",
+        "years": "—"
+      },
+      {
+        "label": "S197",
+        "years": "—"
+      },
+      {
+        "label": "S550",
+        "years": "—"
+      },
+      {
+        "label": "S650",
+        "years": "—"
+      }
+    ],
+    "Everest": [
+      {
+        "label": "U268/UR",
+        "years": "—"
+      },
+      {
+        "label": "U375/UA",
+        "years": "—"
+      },
+      {
+        "label": "U704/UB",
+        "years": "—"
+      }
+    ],
+    "Ranger": [
+      {
+        "label": "P375/PX",
+        "years": "—"
+      },
+      {
+        "label": "P703/RA",
+        "years": "—"
+      }
+    ]
+  },
+  "Mazda": {
+    "2": [
+      {
+        "label": "DY",
+        "years": "—"
+      },
+      {
+        "label": "DE/DH",
+        "years": "—"
+      },
+      {
+        "label": "DJ/DL",
+        "years": "—"
+      }
+    ],
+    "3": [
+      {
+        "label": "BK",
+        "years": "—"
+      },
+      {
+        "label": "BL",
+        "years": "—"
+      },
+      {
+        "label": "BM/BN/BY",
+        "years": "—"
+      },
+      {
+        "label": "BP",
+        "years": "—"
+      }
+    ],
+    "Mx 5": [
+      {
+        "label": "Generations",
+        "years": "—"
+      },
+      {
+        "label": "1989–1997",
+        "years": "1989-1997"
+      },
+      {
+        "label": "1998–2005",
+        "years": "1998-2005"
+      },
+      {
+        "label": "2005–2015",
+        "years": "2005-2015"
+      },
+      {
+        "label": "2015–present",
+        "years": "2015-present"
+      }
+    ],
+    "Bt 50": [
+      {
+        "label": "UN",
+        "years": "—"
+      },
+      {
+        "label": "UP, UR",
+        "years": "—"
+      },
+      {
+        "label": "TF",
+        "years": "—"
+      }
+    ],
+    "Cx 5": [
+      {
+        "label": "KE",
+        "years": "—"
+      },
+      {
+        "label": "KF",
+        "years": "—"
+      },
+      {
+        "label": "KM",
+        "years": "—"
+      }
+    ]
+  },
+  "Hyundai": {
+    "I20": [
+      {
+        "label": "PB",
+        "years": "—"
+      },
+      {
+        "label": "GB/IB",
+        "years": "—"
+      },
+      {
+        "label": "BC3/BI3",
+        "years": "—"
+      }
+    ],
+    "I30": [
+      {
+        "label": "FD",
+        "years": "—"
+      },
+      {
+        "label": "GD",
+        "years": "—"
+      },
+      {
+        "label": "PD",
+        "years": "—"
+      },
+      {
+        "label": "2020",
+        "years": "—"
+      },
+      {
+        "label": "2024",
+        "years": "—"
+      }
+    ],
+    "Kona": [
+      {
+        "label": "OS",
+        "years": "—"
+      },
+      {
+        "label": "SX2",
+        "years": "—"
+      }
+    ],
+    "Palisade": [
+      {
+        "label": "LX2",
+        "years": "—"
+      },
+      {
+        "label": "LX3",
+        "years": "—"
+      }
+    ],
+    "Staria": [
+      {
+        "label": "2026",
+        "years": "—"
+      }
+    ],
+    "Sonata": [
+      {
+        "label": "Y1",
+        "years": "—"
+      },
+      {
+        "label": "Y2",
+        "years": "—"
+      },
+      {
+        "label": "Y3",
+        "years": "—"
+      },
+      {
+        "label": "EF",
+        "years": "—"
+      },
+      {
+        "label": "NF",
+        "years": "—"
+      },
+      {
+        "label": "YF",
+        "years": "—"
+      },
+      {
+        "label": "LF",
+        "years": "—"
+      },
+      {
+        "label": "2017",
+        "years": "—"
+      },
+      {
+        "label": "DN8",
+        "years": "—"
+      }
+    ],
+    "Santa Fe": [
+      {
+        "label": "SM",
+        "years": "—"
+      },
+      {
+        "label": "CM",
+        "years": "—"
+      },
+      {
+        "label": "DM/NC",
+        "years": "—"
+      },
+      {
+        "label": "DM",
+        "years": "—"
+      },
+      {
+        "label": "NC",
+        "years": "—"
+      },
+      {
+        "label": "TM",
+        "years": "—"
+      },
+      {
+        "label": "MX5",
+        "years": "—"
+      }
+    ],
+    "Venue": [
+      {
+        "label": "QX",
+        "years": "—"
+      },
+      {
+        "label": "QU2",
+        "years": "—"
+      }
+    ],
+    "Tucson": [
+      {
+        "label": "JM",
+        "years": "—"
+      },
+      {
+        "label": "LM",
+        "years": "—"
+      },
+      {
+        "label": "TL",
+        "years": "—"
+      },
+      {
+        "label": "NX4",
+        "years": "—"
+      }
+    ]
+  },
+  "Kia": {
+    "Carnival": [
+      {
+        "label": "KV-II",
+        "years": "—"
+      },
+      {
+        "label": "VQ",
+        "years": "—"
+      },
+      {
+        "label": "YP",
+        "years": "—"
+      },
+      {
+        "label": "KA4",
+        "years": "—"
+      }
+    ],
+    "Niro": [
+      {
+        "label": "DE",
+        "years": "—"
+      },
+      {
+        "label": "HEV",
+        "years": "—"
+      },
+      {
+        "label": "PHEV",
+        "years": "—"
+      },
+      {
+        "label": "SG2",
+        "years": "—"
+      },
+      {
+        "label": "2026",
+        "years": "—"
+      },
+      {
+        "label": "2013",
+        "years": "—"
+      }
+    ],
+    "Picanto": [
+      {
+        "label": "SA",
+        "years": "—"
+      },
+      {
+        "label": "TA",
+        "years": "—"
+      },
+      {
+        "label": "JA",
+        "years": "—"
+      }
+    ],
+    "Sorento": [
+      {
+        "label": "BL",
+        "years": "—"
+      },
+      {
+        "label": "XM",
+        "years": "—"
+      },
+      {
+        "label": "UM",
+        "years": "—"
+      },
+      {
+        "label": "MQ4",
+        "years": "—"
+      }
+    ],
+    "Seltos": [
+      {
+        "label": "SP2",
+        "years": "—"
+      },
+      {
+        "label": "SP3",
+        "years": "—"
+      }
+    ],
+    "Sportage": [
+      {
+        "label": "NB",
+        "years": "—"
+      },
+      {
+        "label": "JE/KM",
+        "years": "—"
+      },
+      {
+        "label": "SL",
+        "years": "—"
+      },
+      {
+        "label": "QL",
+        "years": "—"
+      },
+      {
+        "label": "NQ5",
+        "years": "—"
+      }
+    ]
+  },
+  "Volkswagen": {
+    "Amarok": [
+      {
+        "label": "2H",
+        "years": "—"
+      },
+      {
+        "label": "NF",
+        "years": "—"
+      }
+    ],
+    "Caddy": [
+      {
+        "label": "Typ 14",
+        "years": "—"
+      },
+      {
+        "label": "Typ 9K/9U",
+        "years": "—"
+      },
+      {
+        "label": "Typ 2K",
+        "years": "—"
+      },
+      {
+        "label": "Typ SB",
+        "years": "—"
+      }
+    ],
+    "Crafter": [
+      {
+        "label": "Typ 2E/2F, 2006–2017",
+        "years": "2006-2017"
+      },
+      {
+        "label": "2011–2017",
+        "years": "2011-2017"
+      },
+      {
+        "label": "Typ Gen",
+        "years": "2017-present"
+      }
+    ],
+    "Golf": [
+      {
+        "label": "Mk1/A1, Typ 17",
+        "years": "—"
+      },
+      {
+        "label": "Mk2/A2",
+        "years": "—"
+      },
+      {
+        "label": "Mk3/A3",
+        "years": "—"
+      },
+      {
+        "label": "Mk4/A4, Typ 1J",
+        "years": "—"
+      },
+      {
+        "label": "Mk4.5",
+        "years": "—"
+      },
+      {
+        "label": "Mk5/A5, Typ 1K",
+        "years": "—"
+      },
+      {
+        "label": "Mk6/A6, Typ 5K",
+        "years": "—"
+      },
+      {
+        "label": "Mk7, Typ 5G",
+        "years": "—"
+      },
+      {
+        "label": "Mk8, CD1",
+        "years": "—"
+      }
+    ],
+    "Polo": [
+      {
+        "label": "86",
+        "years": "—"
+      },
+      {
+        "label": "86C",
+        "years": "—"
+      },
+      {
+        "label": "6N/6KV",
+        "years": "—"
+      },
+      {
+        "label": "6Q/9N/9N3",
+        "years": "—"
+      },
+      {
+        "label": "6R/6C/61",
+        "years": "—"
+      },
+      {
+        "label": "AW/BZ",
+        "years": "—"
+      },
+      {
+        "label": "Mk2 Gen",
+        "years": "—"
+      },
+      {
+        "label": "Mk3 Polo GTI",
+        "years": "—"
+      },
+      {
+        "label": "Mk4 Polo GT",
+        "years": "—"
+      },
+      {
+        "label": "Mk4 Polo GTI",
+        "years": "—"
+      },
+      {
+        "label": "Mk5 Polo GTI",
+        "years": "—"
+      },
+      {
+        "label": "Mk6 Polo GTI",
+        "years": "—"
+      }
+    ],
+    "T Roc": [
+      {
+        "label": "2017",
+        "years": "—"
+      },
+      {
+        "label": "AC7",
+        "years": "—"
+      },
+      {
+        "label": "2025",
+        "years": "—"
+      },
+      {
+        "label": "2028",
+        "years": "—"
+      }
+    ],
+    "Tayron": [
+      {
+        "label": "Typ 5N",
+        "years": "—"
+      },
+      {
+        "label": "Typ DN",
+        "years": "—"
+      }
+    ],
+    "Touareg": [
+      {
+        "label": "7L",
+        "years": "—"
+      },
+      {
+        "label": "7P",
+        "years": "—"
+      },
+      {
+        "label": "2011",
+        "years": "—"
+      },
+      {
+        "label": "CR",
+        "years": "—"
+      }
+    ],
+    "Tiguan": [
+      {
+        "label": "5N",
+        "years": "—"
+      },
+      {
+        "label": "2012",
+        "years": "—"
+      },
+      {
+        "label": "AD/BW",
+        "years": "—"
+      },
+      {
+        "label": "CT1",
+        "years": "—"
+      }
+    ]
+  },
+  "Nissan": {
+    "Ariya": [
+      {
+        "label": "2026",
+        "years": "—"
+      }
+    ],
+    "Juke": [
+      {
+        "label": "F15",
+        "years": "—"
+      },
+      {
+        "label": "2009",
+        "years": "—"
+      },
+      {
+        "label": "F16",
+        "years": "—"
+      }
+    ],
+    "Navara": [
+      {
+        "label": "1985",
+        "years": "—"
+      },
+      {
+        "label": "D22",
+        "years": "—"
+      },
+      {
+        "label": "D40",
+        "years": "—"
+      },
+      {
+        "label": "D23",
+        "years": "—"
+      },
+      {
+        "label": "D27",
+        "years": "—"
+      }
+    ],
+    "Patrol": [
+      {
+        "label": "4W60",
+        "years": "—"
+      },
+      {
+        "label": "4W70 series",
+        "years": "—"
+      },
+      {
+        "label": "60",
+        "years": "—"
+      },
+      {
+        "label": "160",
+        "years": "—"
+      },
+      {
+        "label": "1986",
+        "years": "—"
+      },
+      {
+        "label": "Y60",
+        "years": "—"
+      },
+      {
+        "label": "Y61",
+        "years": "—"
+      },
+      {
+        "label": "Y62",
+        "years": "—"
+      },
+      {
+        "label": "Y63",
+        "years": "—"
+      }
+    ],
+    "Qashqai": [
+      {
+        "label": "J10",
+        "years": "—"
+      },
+      {
+        "label": "NJ10",
+        "years": "—"
+      },
+      {
+        "label": "J11",
+        "years": "—"
+      },
+      {
+        "label": "J12",
+        "years": "—"
+      }
+    ],
+    "X Trail": [
+      {
+        "label": "T30",
+        "years": "—"
+      },
+      {
+        "label": "T31",
+        "years": "—"
+      },
+      {
+        "label": "T32",
+        "years": "—"
+      },
+      {
+        "label": "2017",
+        "years": "—"
+      },
+      {
+        "label": "T33",
+        "years": "—"
+      },
+      {
+        "label": "2025",
+        "years": "—"
+      }
+    ],
+    "Z": [
+      {
+        "label": "2026",
+        "years": "—"
+      }
+    ]
+  }
+}
