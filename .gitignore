@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# AI-generated reliability cache (local / server filesystem)
+/data/reliability-reports/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
