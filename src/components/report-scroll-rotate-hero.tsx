@@ -110,15 +110,15 @@ export function ReportScrollRotateHero({
 
   useEffect(() => {
     if (images.length <= 1) {
-      setFramesReady(true);
+      queueMicrotask(() => setFramesReady(true));
       return;
     }
     if (reduceMotion) {
-      setFramesReady(true);
+      queueMicrotask(() => setFramesReady(true));
       return;
     }
     let cancelled = false;
-    setFramesReady(false);
+    queueMicrotask(() => setFramesReady(false));
     preloadImageFrames(images).then(() => {
       if (!cancelled) setFramesReady(true);
     });
