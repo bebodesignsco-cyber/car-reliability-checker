@@ -7,10 +7,10 @@ import { formatUrlSegment } from "@/lib/format-url-segment";
 export function buildReliabilityFaqItems(
   make: string,
   model: string,
-  generation: string,
+  subject: string,
   profile: ReliabilityProfile,
 ): { question: string; answer: string }[] {
-  const vehicle = `${formatUrlSegment(make)} ${formatUrlSegment(model)} ${formatUrlSegment(generation)}`;
+  const vehicle = `${formatUrlSegment(make)} ${formatUrlSegment(model)} ${subject}`;
   const years = profile.yearsRange;
 
   const buySummary =

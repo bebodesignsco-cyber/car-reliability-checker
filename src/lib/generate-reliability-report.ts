@@ -71,14 +71,19 @@ function extractSourcesFromResponse(response: {
 const SCHEMA_HINT = JSON.stringify(RELIABILITY_PROFILE_JSON_SCHEMA, null, 2);
 
 function buildGroundedPrompt(ctx: ResolvedSelectorContext): string {
+  const requestedYearLine = ctx.modelYear ? `- Requested model year: ${ctx.modelYear}` : "";
   return `You are summarizing real-world reliability for one vehicle generation for car buyers.
 
 Vehicle:
 - Market context: Australia (right-hand drive may apply; include globally relevant platform issues).
 - Make: ${ctx.makeName}
 - Model: ${ctx.modelName}
-- Generation / series: ${ctx.generationLabel}
-- Typical years on file: ${ctx.years}
+- URL segment selected by user: ${ctx.segmentSlug}
+- Internal generation label: ${ctx.generationLabel}
+- Internal generation years field: ${ctx.years}
+${requestedYearLine}
+
+If internal generation label is generic (e.g. "All variants"), infer the likely generation/chassis context from retrieved sources for the requested model year and state uncertainty when sources conflict.
 
 Use Google Search to consult owner forums, Facebook groups (summaries only), enthusiast sites, repair databases, TSB/recall summaries, and automotive press. Prefer recurring themes across multiple independent sources.
 
@@ -87,31 +92,44 @@ ${SCHEMA_HINT}
 
 Base trustScore 0-100 on how consistently sources report serious powertrain/drivetrain issues vs routine maintenance.
 
-yearsRange should match this generation (use "${ctx.years}" if it aligns with sources, otherwise refine to what sources indicate).
+yearsRange should match retrieved evidence for this request. If model year is provided, center the range around that year and adjacent production years supported by sources.
+
+vehicleContext is optional. Only populate fields when sources clearly support them:
+- generationSummary: 1-3 short objective sentences.
+- platformOrSeriesCodes/bodyStyles/drivetrains: include only values explicitly supported by sources.
+- confidenceNote: include when source evidence is thin or conflicting.
+- Never invent generation codes, body styles, drivetrains, or precise facts not present in retrieved sources.
 
 Include at least one recommended configuration and at least one configuration to avoid when sources support it; if sources are thin, still give best-effort labels and note uncertainty in strengths/criticalFailures wording (do not add fields outside the schema).
 
-commonPlatformFailures: short inspection bullets that apply across trims (rust, suspension, electronics, fluids, etc.).`;
+commonPlatformFailures: short inspection bullets that apply across trims (rust, suspension, electronics, fluids, etc.).
+
+Avoid exact statistics, recall identifiers, and date claims unless those details appear in retrieved sources.`;
 }
 
 function buildStructuredOnlyPrompt(ctx: ResolvedSelectorContext): string {
+  const requestedYearLine = ctx.modelYear ? `- Requested model year: ${ctx.modelYear}` : "";
   return `You are summarizing real-world reliability for one vehicle generation for car buyers, using general automotive knowledge (no live web search).
 
 Vehicle:
 - Market context: Australia (right-hand drive may apply; include globally relevant platform issues).
 - Make: ${ctx.makeName}
 - Model: ${ctx.modelName}
-- Generation / series: ${ctx.generationLabel}
-- Typical years on file: ${ctx.years}
+- URL segment selected by user: ${ctx.segmentSlug}
+- Internal generation label: ${ctx.generationLabel}
+- Internal generation years field: ${ctx.years}
+${requestedYearLine}
 
-yearsRange should match this generation (use "${ctx.years}" when reasonable).
+yearsRange should match this generation and requested model year when present.
 
+vehicleContext is optional. If uncertain, omit unsupported fields.
 Include at least one recommended configuration and at least one configuration to avoid; if uncertain, give best-effort labels and note uncertainty in strengths/criticalFailures wording.`;
 }
 
 export type GenerateReportResult = {
   profile: ReliabilityProfile;
   sources: ReportSource[];
+  retrievalMode: "grounded" | "ungrounded";
 };
 
 export async function generateReliabilityReportWithGrounding(
@@ -146,7 +164,11 @@ export async function generateReliabilityReportWithGrounding(
               candidates?: { groundingMetadata?: { groundingChunks?: { web?: { title?: string; uri?: string } }[] } }[];
             },
           );
-          return { profile, sources };
+          return {
+            profile,
+            sources,
+            retrievalMode: sources.length > 0 ? "grounded" : "ungrounded",
+          };
         } catch {
           // Fall through to structured-only generation on this model
         }
@@ -173,7 +195,7 @@ export async function generateReliabilityReportWithGrounding(
       }
 
       const profile = parseProfileJson(structuredText);
-      return { profile, sources: [] };
+      return { profile, sources: [], retrievalMode: "ungrounded" };
     } catch (e) {
       lastError = e;
     }

@@ -1,23 +1,24 @@
 import { SELECTOR_TREE } from "@/lib/selector-data";
+import { listSelectableYearsForModel } from "@/lib/model-year";
 
 export type GenerationPath = {
   make: string;
   model: string;
-  generation: string;
+  segment: string;
 };
 
 /**
- * All indexable `/{make}/{model}/{generation}` paths from the selector tree.
+ * Indexable year paths for sitemap. Limited to recent windows to avoid very large URL sets.
  */
-export function getAllGenerationPaths(): GenerationPath[] {
+export function getAllYearPaths(limitPerModel = 10): GenerationPath[] {
   const out: GenerationPath[] = [];
   for (const make of SELECTOR_TREE) {
     for (const model of make.models) {
-      for (const gen of model.generations) {
+      for (const year of listSelectableYearsForModel(model).slice(0, limitPerModel)) {
         out.push({
           make: make.slug,
           model: model.slug,
-          generation: gen.slug,
+          segment: String(year),
         });
       }
     }

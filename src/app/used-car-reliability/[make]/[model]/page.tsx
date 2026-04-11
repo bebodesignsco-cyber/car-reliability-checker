@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ModelHubJsonLd } from "@/components/model-hub-json-ld";
+import { listSelectableYearsForModel } from "@/lib/model-year";
 import { getModelBySlug } from "@/lib/selector-nav";
 import { SITE_NAME } from "@/lib/site-config";
 
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Not found" };
   }
   const title = `${ctx.make.name} ${ctx.model.name} used car reliability (AU)`;
-  const description = `Australian used car reliability by generation for ${ctx.make.name} ${ctx.model.name}: open a series for trust scores, buy vs avoid trims, and inspection points.`;
+  const description = `Australian used car reliability by year for ${ctx.make.name} ${ctx.model.name}: open a model year report for trust scores, buy vs avoid trims, and inspection points.`;
   return {
     title,
     description,
@@ -40,6 +41,7 @@ export default async function ModelHubPage({ params }: PageProps) {
   if (!ctx) notFound();
 
   const { make: makeEntry, model: modelEntry } = ctx;
+  const yearLinks = listSelectableYearsForModel(modelEntry).slice(0, 25);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-10 px-4 py-10 sm:px-6 sm:py-14 md:py-16">
@@ -70,8 +72,8 @@ export default async function ModelHubPage({ params }: PageProps) {
           {makeEntry.name} {modelEntry.name} used car reliability
         </h1>
         <p className="mt-4 text-base leading-relaxed text-foreground sm:text-[1.05rem]">
-          Choose a generation (series) to open the full report: trust score, recommended
-          configurations, configurations to avoid, and platform-wide inspection bullets.
+          Choose a model year to open the full report: trust score, recommended configurations,
+          configurations to avoid, and platform-wide inspection bullets.
         </p>
         <p className="mt-4">
           <Link
@@ -88,20 +90,23 @@ export default async function ModelHubPage({ params }: PageProps) {
           id="gens-heading"
           className="text-xs font-bold uppercase tracking-wide text-foreground"
         >
-          Generations
+          Model years
         </h2>
         <ul className="mt-6 flex flex-col gap-3" role="list">
-          {modelEntry.generations.map((g) => (
-            <li key={g.slug}>
+          {yearLinks.map((year) => (
+            <li key={year}>
               <Link
-                href={`/${make}/${model}/${g.slug}`}
+                href={`/${make}/${model}/${year}`}
                 className="block border-2 border-foreground bg-background px-4 py-3 text-base font-semibold text-foreground no-underline transition hover:bg-foreground hover:text-background"
               >
-                {g.label} ({g.years})
+                Model year {year}
               </Link>
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-sm text-foreground/80">
+          Need another year? Use the homepage selector to pick any model year from 1980 onward.
+        </p>
       </section>
     </main>
   );

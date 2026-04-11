@@ -31,7 +31,7 @@ export default function UsedCarReliabilityPillarPage() {
           {title}
         </h1>
         <p className="mt-4 text-base leading-relaxed text-foreground sm:text-[1.05rem]">
-          Browse make hubs and model guides, then open a generation report for trust scores, buy vs
+          Browse make hubs and model guides, then open a model-year report for trust scores, buy vs
           avoid configurations, and inspection points tailored to Australian used car buyers.
         </p>
         <p className="mt-4">

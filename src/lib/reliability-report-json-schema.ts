@@ -59,5 +59,25 @@ export const RELIABILITY_PROFILE_JSON_SCHEMA = {
       minItems: 1,
       items: { type: "string" },
     },
+    vehicleContext: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        generationSummary: { type: "string" },
+        platformOrSeriesCodes: {
+          type: "array",
+          items: { type: "string" },
+        },
+        bodyStyles: {
+          type: "array",
+          items: { type: "string" },
+        },
+        drivetrains: {
+          type: "array",
+          items: { type: "string" },
+        },
+        confidenceNote: { type: "string" },
+      },
+    },
   },
 } as const;

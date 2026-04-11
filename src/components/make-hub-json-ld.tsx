@@ -17,7 +17,7 @@ type MakeHubJsonLdProps = {
 export function MakeHubJsonLd({ makeSlug, makeName }: MakeHubJsonLdProps) {
   const base = getSiteUrl();
   const url = `${base}/used-car-reliability/${makeSlug}`;
-  const description = `Used car reliability guides for ${makeName} in Australia: models, generations, trust scores, and inspection points.`;
+  const description = `Used car reliability guides for ${makeName} in Australia: models, model years, trust scores, and inspection points.`;
 
   const breadcrumb = {
     "@context": "https://schema.org",

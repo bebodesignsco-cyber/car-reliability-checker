@@ -24,7 +24,7 @@ export function ModelHubJsonLd({
 }: ModelHubJsonLdProps) {
   const base = getSiteUrl();
   const url = `${base}/used-car-reliability/${makeSlug}/${modelSlug}`;
-  const description = `Used car reliability for ${makeName} ${modelName} in Australia: generation guides with trust scores, buy vs avoid configurations, and inspection points.`;
+  const description = `Used car reliability for ${makeName} ${modelName} in Australia: model-year guides with trust scores, buy vs avoid configurations, and inspection points.`;
 
   const breadcrumb = {
     "@context": "https://schema.org",

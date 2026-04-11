@@ -1,9 +1,6 @@
 import type { SelectorMake } from "./selector-types";
 import type { ModelSeriesDatabase } from "./model-series-types";
-import {
-  buildSelectorTreeFromTaxonomy,
-  makeHasAnyModelSeriesData,
-} from "./australian-taxonomy-to-selector-tree";
+import { buildSelectorTreeFromTaxonomy } from "./australian-taxonomy-to-selector-tree";
 import australianCarTaxonomy from "../../public/australian_car_taxonomy.json";
 import australianModelSeries from "../../public/australian_model_series.json";
 import top10ModelSeries from "../../public/top10_model_series.json";
@@ -38,4 +35,4 @@ const mergedSeries: ModelSeriesDatabase = mergeModelSeriesDatabases(
 export const SELECTOR_TREE: SelectorMake[] = buildSelectorTreeFromTaxonomy(
   australianCarTaxonomy,
   mergedSeries,
-).filter(makeHasAnyModelSeriesData);
+);

@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Not found" };
   }
   const label = m.name;
-  const description = `Used car reliability in Australia for ${label}: browse models and generations, trust scores, buy vs avoid trims, and inspection points.`;
+  const description = `Used car reliability in Australia for ${label}: browse models and model years, trust scores, buy vs avoid trims, and inspection points.`;
   return {
     title: `${label} used car reliability (AU)`,
     description,
@@ -59,7 +59,7 @@ export default async function MakeHubPage({ params }: PageProps) {
           {entry.name} used car reliability
         </h1>
         <p className="mt-4 text-base leading-relaxed text-foreground sm:text-[1.05rem]">
-          Pick a model to see generations we cover. Each report includes a trust score, recommended
+          Pick a model to see year-based reports. Each report includes a trust score, recommended
           configurations, known weak points, and platform-wide inspection notes for Australian buyers.
         </p>
       </header>
@@ -86,7 +86,7 @@ export default async function MakeHubPage({ params }: PageProps) {
       </section>
 
       <p className="text-sm text-foreground/80">
-        Need a specific year range? Pick a model below, then choose a generation. You can also jump
+        Need a specific year? Pick a model below, then choose a model year. You can also jump
         straight in with the{" "}
         <Link href="/" className="font-medium underline underline-offset-4">
           homepage selector

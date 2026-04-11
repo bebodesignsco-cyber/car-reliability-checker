@@ -10,6 +10,12 @@ import {
 } from "@/lib/reliability-report-cache";
 import { resolveSelectorContext } from "@/lib/selector-resolve";
 
+function parseCacheSegment(segment: string): { segmentSlug: string; generationQuery?: string } {
+  const m = segment.match(/^(\d{4})--([a-z0-9-]+)$/i);
+  if (!m) return { segmentSlug: segment };
+  return { segmentSlug: m[1], generationQuery: m[2] };
+}
+
 /**
  * Monthly cron: refresh every cached report that is past the 30-day TTL.
  * Secure with Authorization: Bearer CRON_SECRET (same value as env CRON_SECRET).
@@ -40,25 +46,32 @@ export async function GET(request: Request): Promise<Response> {
   const results: { key: string; status: "refreshed" | "skipped" | "error" }[] = [];
 
   for (const { make, model, generation } of keys) {
+    const cacheSegment = parseCacheSegment(generation);
     const cached = await readCachedReport(make, model, generation);
     if (!cached || !isReportStale(cached.generatedAt)) {
       results.push({ key: `${make}/${model}/${generation}`, status: "skipped" });
       continue;
     }
 
-    const ctx = resolveSelectorContext(make, model, generation);
+    const ctx = resolveSelectorContext(
+      make,
+      model,
+      cacheSegment.segmentSlug,
+      cacheSegment.generationQuery,
+    );
     if (!ctx) {
       results.push({ key: `${make}/${model}/${generation}`, status: "skipped" });
       continue;
     }
 
     try {
-      const { profile, sources } = await generateReliabilityReportWithGrounding(ctx);
+      const { profile, sources, retrievalMode } = await generateReliabilityReportWithGrounding(ctx);
       await writeCachedReport(make, model, generation, {
         schemaVersion: REPORT_CACHE_SCHEMA_VERSION,
         generatedAt: new Date().toISOString(),
         profile,
         sources,
+        retrievalMode,
         staleServed: false,
       });
       results.push({ key: `${make}/${model}/${generation}`, status: "refreshed" });

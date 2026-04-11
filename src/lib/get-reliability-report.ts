@@ -1,16 +1,17 @@
 import { generateReliabilityReportWithGrounding } from "@/lib/generate-reliability-report";
 import { getProfileForSegments } from "@/lib/mock-profiles";
+import { isYearSegment } from "@/lib/model-year";
 import {
   isReportStale,
   readCachedReport,
   REPORT_CACHE_SCHEMA_VERSION,
   writeCachedReport,
 } from "@/lib/reliability-report-cache";
-import { resolveSelectorContext } from "@/lib/selector-resolve";
+import { resolveSelectorContext, type ResolvedSelectorContext } from "@/lib/selector-resolve";
 import type { CachedReliabilityReport, ReliabilityProfile } from "@/types";
 
 export type LoadReliabilityReportResult =
-  | { kind: "ok"; report: CachedReliabilityReport }
+  | { kind: "ok"; report: CachedReliabilityReport; context: ResolvedSelectorContext }
   | { kind: "not_found" }
   | { kind: "error"; message: string };
 
@@ -20,55 +21,68 @@ function cachedFromMock(profile: ReliabilityProfile): CachedReliabilityReport {
     generatedAt: new Date().toISOString(),
     profile,
     sources: [],
+    retrievalMode: "ungrounded",
   };
+}
+
+function cacheSegment(segmentSlug: string, generationSlug: string, generationQuery?: string | null): string {
+  if (!isYearSegment(segmentSlug)) return segmentSlug;
+  if (generationQuery && generationQuery === generationSlug) {
+    return `${segmentSlug}--${generationSlug}`;
+  }
+  return segmentSlug;
 }
 
 export async function loadReliabilityReport(
   makeSlug: string,
   modelSlug: string,
-  generationSlug: string,
+  segmentSlug: string,
+  generationQuery?: string | null,
 ): Promise<LoadReliabilityReportResult> {
-  const ctx = resolveSelectorContext(makeSlug, modelSlug, generationSlug);
+  const ctx = resolveSelectorContext(makeSlug, modelSlug, segmentSlug, generationQuery);
   if (!ctx) {
     return { kind: "not_found" };
   }
+  const keySegment = cacheSegment(segmentSlug, ctx.generationSlug, generationQuery);
 
-  const cached = await readCachedReport(makeSlug, modelSlug, generationSlug);
+  const cached = await readCachedReport(makeSlug, modelSlug, keySegment);
   const hasApiKey = Boolean(process.env.GEMINI_API_KEY?.trim());
 
   if (cached && !isReportStale(cached.generatedAt)) {
-    return { kind: "ok", report: { ...cached, staleServed: false } };
+    return { kind: "ok", report: { ...cached, staleServed: false }, context: ctx };
   }
 
   if (hasApiKey) {
     try {
-      const { profile, sources } = await generateReliabilityReportWithGrounding(ctx);
+      const { profile, sources, retrievalMode } = await generateReliabilityReportWithGrounding(ctx);
       const report: CachedReliabilityReport = {
         schemaVersion: REPORT_CACHE_SCHEMA_VERSION,
         generatedAt: new Date().toISOString(),
         profile,
         sources,
+        retrievalMode,
         staleServed: false,
       };
       try {
-        await writeCachedReport(makeSlug, modelSlug, generationSlug, report);
+        await writeCachedReport(makeSlug, modelSlug, keySegment, report);
       } catch (cacheErr) {
         console.error(
           "[reliability] Failed to persist report cache (report still shown):",
           cacheErr instanceof Error ? cacheErr.message : cacheErr,
         );
       }
-      return { kind: "ok", report };
+      return { kind: "ok", report, context: ctx };
     } catch (e) {
       if (cached) {
         return {
           kind: "ok",
           report: { ...cached, staleServed: true },
+          context: ctx,
         };
       }
-      const mock = getProfileForSegments(makeSlug, modelSlug, generationSlug);
+      const mock = getProfileForSegments(makeSlug, modelSlug, ctx.generationSlug);
       if (mock) {
-        return { kind: "ok", report: cachedFromMock(mock) };
+        return { kind: "ok", report: cachedFromMock(mock), context: ctx };
       }
       const detail = e instanceof Error ? e.message : String(e);
       console.error("[reliability] Gemini report generation failed:", detail);
@@ -85,12 +99,12 @@ export async function loadReliabilityReport(
   }
 
   if (cached) {
-    return { kind: "ok", report: { ...cached, staleServed: false } };
+    return { kind: "ok", report: { ...cached, staleServed: false }, context: ctx };
   }
 
-  const mock = getProfileForSegments(makeSlug, modelSlug, generationSlug);
+  const mock = getProfileForSegments(makeSlug, modelSlug, ctx.generationSlug);
   if (mock) {
-    return { kind: "ok", report: cachedFromMock(mock) };
+    return { kind: "ok", report: cachedFromMock(mock), context: ctx };
   }
 
   return {

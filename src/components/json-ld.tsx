@@ -45,7 +45,8 @@ export function HomeJsonLd() {
 type GenerationJsonLdProps = {
   make: string;
   model: string;
-  generation: string;
+  segment: string;
+  subject: string;
   profile: ReliabilityProfile;
   faqItems: { question: string; answer: string }[];
 };
@@ -53,14 +54,15 @@ type GenerationJsonLdProps = {
 export function GenerationPageJsonLd({
   make,
   model,
-  generation,
+  segment,
+  subject,
   profile,
   faqItems,
 }: GenerationJsonLdProps) {
   const base = getSiteUrl();
-  const path = `/${make}/${model}/${generation}`;
+  const path = `/${make}/${model}/${segment}`;
   const url = `${base}${path}`;
-  const headline = `${formatUrlSegment(make)} ${formatUrlSegment(model)} ${formatUrlSegment(generation)}`;
+  const headline = `${formatUrlSegment(make)} ${formatUrlSegment(model)} ${subject}`;
   const description = `Used car reliability in Australia for ${headline} (${profile.yearsRange}). Trust score ${profile.trustScore}/100, buy vs avoid configurations, and inspection points.`;
 
   const breadcrumb = {
@@ -94,7 +96,7 @@ export function GenerationPageJsonLd({
       {
         "@type": "ListItem",
         position: 5,
-        name: formatUrlSegment(generation),
+        name: subject,
         item: url,
       },
     ],

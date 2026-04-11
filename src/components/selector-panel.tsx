@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import { listSelectableYearsForModel, resolveYearToGeneration } from "@/lib/model-year";
 import { SELECTOR_TREE } from "@/lib/selector-data";
 
 export function SelectorPanel() {
@@ -10,7 +11,8 @@ export function SelectorPanel() {
   const [isPending, startTransition] = useTransition();
   const [makeSlug, setMakeSlug] = useState("");
   const [modelSlug, setModelSlug] = useState("");
-  const [generationSlug, setGenerationSlug] = useState("");
+  const [year, setYear] = useState("");
+  const [generationHint, setGenerationHint] = useState("");
 
   const make = useMemo(
     () => SELECTOR_TREE.find((m) => m.slug === makeSlug),
@@ -20,29 +22,50 @@ export function SelectorPanel() {
     () => make?.models.find((mo) => mo.slug === modelSlug),
     [make, modelSlug],
   );
-  const generation = useMemo(
-    () => model?.generations.find((g) => g.slug === generationSlug),
-    [model, generationSlug],
-  );
+  const availableYears = useMemo(() => (model ? listSelectableYearsForModel(model) : []), [model]);
+  const yearNumber = Number(year);
+  const yearResolution = useMemo(() => {
+    if (!model || year.length === 0 || !Number.isFinite(yearNumber)) return null;
+    return resolveYearToGeneration(model, yearNumber, generationHint || null);
+  }, [model, year, yearNumber, generationHint]);
+  const hasAmbiguousGenerations =
+    yearResolution?.kind === "matched" && yearResolution.matches.length > 1;
+  const hasNoMatch = year.length > 0 && yearResolution?.kind === "no_match";
 
-  const canSubmit = Boolean(make && model && generation);
+  const canSubmit = Boolean(
+    make &&
+      model &&
+      year.length > 0 &&
+      !hasNoMatch &&
+      (!hasAmbiguousGenerations || Boolean(generationHint)),
+  );
 
   function handleMakeChange(value: string) {
     setMakeSlug(value);
     setModelSlug("");
-    setGenerationSlug("");
+    setYear("");
+    setGenerationHint("");
   }
 
   function handleModelChange(value: string) {
     setModelSlug(value);
-    setGenerationSlug("");
+    setYear("");
+    setGenerationHint("");
+  }
+
+  function handleYearChange(value: string) {
+    setYear(value);
+    setGenerationHint("");
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit || isPending) return;
     startTransition(() => {
-      router.push(`/${make!.slug}/${model!.slug}/${generation!.slug}`);
+      const params = new URLSearchParams();
+      if (generationHint) params.set("generation", generationHint);
+      const query = params.size > 0 ? `?${params.toString()}` : "";
+      router.push(`/${make!.slug}/${model!.slug}/${year}${query}`);
     });
   }
 
@@ -99,27 +122,59 @@ export function SelectorPanel() {
 
           <div className="flex flex-col gap-3">
             <label
-              htmlFor="select-series"
+              htmlFor="select-year"
               className="text-sm font-bold uppercase tracking-wide text-foreground"
             >
-              3. SELECT SERIES
+              3. SELECT YEAR
             </label>
             <select
-              id="select-series"
-              name="series"
-              value={generationSlug}
-              onChange={(e) => setGenerationSlug(e.target.value)}
+              id="select-year"
+              name="year"
+              value={year}
+              onChange={(e) => handleYearChange(e.target.value)}
               disabled={!model}
               className="h-14 w-full border-2 border-foreground bg-background px-4 text-base font-medium text-foreground disabled:cursor-not-allowed disabled:opacity-40"
             >
               <option value="">—</option>
-              {model?.generations.map((g) => (
-                <option key={g.slug} value={g.slug}>
-                  {g.label} ({g.years})
+              {availableYears.map((modelYear) => (
+                <option key={modelYear} value={String(modelYear)}>
+                  {modelYear}
                 </option>
               ))}
             </select>
           </div>
+          {hasAmbiguousGenerations ? (
+            <div className="flex flex-col gap-3">
+              <label
+                htmlFor="select-generation-hint"
+                className="text-sm font-bold uppercase tracking-wide text-foreground"
+              >
+                4. OPTIONAL SERIES HINT
+              </label>
+              <select
+                id="select-generation-hint"
+                name="generationHint"
+                value={generationHint}
+                onChange={(e) => setGenerationHint(e.target.value)}
+                className="h-14 w-full border-2 border-foreground bg-background px-4 text-base font-medium text-foreground"
+              >
+                <option value="">Choose matching series</option>
+                {yearResolution?.kind === "matched"
+                  ? yearResolution.matches.map((g) => (
+                      <option key={g.slug} value={g.slug}>
+                        {g.label} ({g.years})
+                      </option>
+                    ))
+                  : null}
+              </select>
+            </div>
+          ) : null}
+          {hasNoMatch ? (
+            <p className="text-sm text-foreground/80">
+              This year is outside the listed range for this model. Choose another year, or use the
+              model hub for broader coverage.
+            </p>
+          ) : null}
         </div>
       </div>
 

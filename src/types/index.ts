@@ -22,6 +22,14 @@ export type ConfigurationToAvoid = {
   criticalFailures: string[];
 };
 
+export type VehicleContext = {
+  generationSummary?: string;
+  platformOrSeriesCodes?: string[];
+  bodyStyles?: string[];
+  drivetrains?: string[];
+  confidenceNote?: string;
+};
+
 export interface ReliabilityProfile {
   trustScore: number;
   /** e.g. "2003-2014" for report header */
@@ -29,6 +37,7 @@ export interface ReliabilityProfile {
   recommendedConfigurations: RecommendedConfiguration[];
   configurationsToAvoid: ConfigurationToAvoid[];
   commonPlatformFailures: string[];
+  vehicleContext?: VehicleContext;
 }
 
 /** Single web source used for grounding (from Gemini or persisted cache). */
@@ -47,6 +56,7 @@ export type CachedReliabilityReport = {
   generatedAt: string;
   profile: ReliabilityProfile;
   sources: ReportSource[];
+  retrievalMode: "grounded" | "ungrounded";
   /**
    * True when regeneration was attempted (e.g. stale) but failed; an older profile is shown.
    */

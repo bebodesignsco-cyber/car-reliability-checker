@@ -26,7 +26,7 @@ export function RelatedGenerations({
         id="related-gens-heading"
         className="text-xs font-bold uppercase leading-snug tracking-wide text-foreground"
       >
-        Other {modelName} generations
+        Other {modelName} report links
       </h2>
       <ul className="mt-4 flex flex-col gap-3" role="list">
         {items.map((item) => (
@@ -35,7 +35,7 @@ export function RelatedGenerations({
               href={item.href}
               className="text-base font-medium text-foreground underline underline-offset-4 hover:bg-foreground hover:text-background"
             >
-              {item.label} ({item.years})
+              {item.label}
             </Link>
           </li>
         ))}

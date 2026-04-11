@@ -4,7 +4,7 @@ import { formatUrlSegment } from "@/lib/format-url-segment";
 type ReportBuyerSectionsProps = {
   make: string;
   model: string;
-  generation: string;
+  subject: string;
   profile: ReliabilityProfile;
 };
 
@@ -14,10 +14,10 @@ type ReportBuyerSectionsProps = {
 export function ReportBuyerSections({
   make,
   model,
-  generation,
+  subject,
   profile,
 }: ReportBuyerSectionsProps) {
-  const vehicle = `${formatUrlSegment(make)} ${formatUrlSegment(model)} ${formatUrlSegment(generation)}`;
+  const vehicle = `${formatUrlSegment(make)} ${formatUrlSegment(model)} ${subject}`;
   const years = profile.yearsRange;
 
   const bestCombo = profile.recommendedConfigurations[0]?.combo ?? "See recommendations above.";

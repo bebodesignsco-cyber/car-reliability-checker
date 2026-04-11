@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { getAllGenerationPaths } from "@/lib/all-generation-paths";
+import { getAllYearPaths } from "@/lib/all-generation-paths";
 import { SELECTOR_TREE } from "@/lib/selector-data";
 import { getSiteUrl } from "@/lib/site-config";
 
@@ -40,9 +40,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
-  for (const p of getAllGenerationPaths()) {
+  for (const p of getAllYearPaths(8)) {
     entries.push({
-      url: `${base}/${p.make}/${p.model}/${p.generation}`,
+      url: `${base}/${p.make}/${p.model}/${p.segment}`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.75,

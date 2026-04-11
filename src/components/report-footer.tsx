@@ -1,8 +1,6 @@
-import type { ReportSource } from "@/types";
-
 type ReportFooterProps = {
   generatedAtIso: string;
-  sources: ReportSource[];
+  retrievalMode: "grounded" | "ungrounded";
   staleServed?: boolean;
   /** True when cache is past TTL (30 days) but no refresh ran (e.g. missing API key). */
   outdatedWithoutRefresh?: boolean;
@@ -19,7 +17,7 @@ function formatDisplayDate(iso: string): string {
 
 export function ReportFooter({
   generatedAtIso,
-  sources,
+  retrievalMode,
   staleServed,
   outdatedWithoutRefresh,
 }: ReportFooterProps) {
@@ -45,25 +43,11 @@ export function ReportFooter({
         mechanical inspection, warranty, or professional advice. Always verify with a qualified
         technician before purchase.
       </p>
-
-      {sources.length > 0 ? (
-        <div className="mt-8">
-          <h2 className="text-xs font-bold uppercase tracking-wide text-foreground">Sources (web)</h2>
-          <ul className="mt-4 list-disc space-y-2 pl-6 text-sm leading-relaxed" role="list">
-            {sources.map((s) => (
-              <li key={s.uri}>
-                <a
-                  href={s.uri}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-foreground/40 underline-offset-2 hover:decoration-foreground"
-                >
-                  {s.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+      {retrievalMode === "ungrounded" ? (
+        <p className="mt-4 text-sm leading-relaxed text-foreground/90">
+          This version was generated without attached grounding sources. Treat the reliability summary
+          as lower-confidence guidance and verify against primary references.
+        </p>
       ) : null}
     </footer>
   );

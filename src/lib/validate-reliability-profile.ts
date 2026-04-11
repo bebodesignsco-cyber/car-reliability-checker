@@ -4,6 +4,12 @@ function isStringArray(x: unknown): x is string[] {
   return Array.isArray(x) && x.every((i) => typeof i === "string");
 }
 
+function optionalStringArray(x: unknown): string[] | undefined | null {
+  if (x === undefined) return undefined;
+  if (!isStringArray(x)) return null;
+  return x;
+}
+
 export function validateReliabilityProfile(data: unknown): ReliabilityProfile | null {
   if (typeof data !== "object" || data === null) return null;
   const o = data as Record<string, unknown>;
@@ -43,11 +49,33 @@ export function validateReliabilityProfile(data: unknown): ReliabilityProfile | 
     configurationsToAvoid.push({ combo: it.combo, criticalFailures: it.criticalFailures });
   }
 
+  const vehicleContextRaw = o.vehicleContext;
+  let vehicleContext: ReliabilityProfile["vehicleContext"] | undefined;
+  if (vehicleContextRaw !== undefined) {
+    if (typeof vehicleContextRaw !== "object" || vehicleContextRaw === null) return null;
+    const vc = vehicleContextRaw as Record<string, unknown>;
+    if (vc.generationSummary !== undefined && typeof vc.generationSummary !== "string") return null;
+    if (vc.confidenceNote !== undefined && typeof vc.confidenceNote !== "string") return null;
+    const platformOrSeriesCodes = optionalStringArray(vc.platformOrSeriesCodes);
+    const bodyStyles = optionalStringArray(vc.bodyStyles);
+    const drivetrains = optionalStringArray(vc.drivetrains);
+    if (platformOrSeriesCodes === null || bodyStyles === null || drivetrains === null) return null;
+    vehicleContext = {
+      generationSummary:
+        typeof vc.generationSummary === "string" ? vc.generationSummary : undefined,
+      platformOrSeriesCodes: platformOrSeriesCodes ?? undefined,
+      bodyStyles: bodyStyles ?? undefined,
+      drivetrains: drivetrains ?? undefined,
+      confidenceNote: typeof vc.confidenceNote === "string" ? vc.confidenceNote : undefined,
+    };
+  }
+
   return {
     trustScore,
     yearsRange,
     recommendedConfigurations,
     configurationsToAvoid,
     commonPlatformFailures: quirks,
+    vehicleContext,
   };
 }
