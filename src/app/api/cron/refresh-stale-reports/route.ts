@@ -9,11 +9,12 @@ import {
   writeCachedReport,
 } from "@/lib/reliability-report-cache";
 import { resolveSelectorContext } from "@/lib/selector-resolve";
+import { resolveSeriesCandidates } from "@/lib/series-precheck";
 
-function parseCacheSegment(segment: string): { segmentSlug: string; generationQuery?: string } {
+function parseCacheSegment(segment: string): { segmentSlug: string; seriesQuery?: string } {
   const m = segment.match(/^(\d{4})--([a-z0-9-]+)$/i);
   if (!m) return { segmentSlug: segment };
-  return { segmentSlug: m[1], generationQuery: m[2] };
+  return { segmentSlug: m[1], seriesQuery: m[2] };
 }
 
 /**
@@ -53,19 +54,27 @@ export async function GET(request: Request): Promise<Response> {
       continue;
     }
 
-    const ctx = resolveSelectorContext(
-      make,
-      model,
-      cacheSegment.segmentSlug,
-      cacheSegment.generationQuery,
-    );
+    let selectedSeriesLabel: string | undefined;
+    if (/^\d{4}$/.test(cacheSegment.segmentSlug) && cacheSegment.seriesQuery) {
+      const precheck = await resolveSeriesCandidates(make, model, Number(cacheSegment.segmentSlug));
+      const chosen = precheck.candidates.find((c) => c.slug === cacheSegment.seriesQuery);
+      selectedSeriesLabel = chosen?.label;
+    }
+
+    const ctx = resolveSelectorContext(make, model, cacheSegment.segmentSlug, cacheSegment.seriesQuery);
     if (!ctx) {
       results.push({ key: `${make}/${model}/${generation}`, status: "skipped" });
       continue;
     }
+    const finalCtx = {
+      ...ctx,
+      selectedSeries: cacheSegment.seriesQuery,
+      seriesResolutionMethod: cacheSegment.seriesQuery ? ("ai_grounded" as const) : undefined,
+      generationLabel: selectedSeriesLabel ?? ctx.generationLabel,
+    };
 
     try {
-      const { profile, sources, retrievalMode } = await generateReliabilityReportWithGrounding(ctx);
+      const { profile, sources, retrievalMode } = await generateReliabilityReportWithGrounding(finalCtx);
       await writeCachedReport(make, model, generation, {
         schemaVersion: REPORT_CACHE_SCHEMA_VERSION,
         generatedAt: new Date().toISOString(),

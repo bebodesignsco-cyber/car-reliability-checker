@@ -4,6 +4,7 @@ import { RELIABILITY_PROFILE_JSON_SCHEMA } from "@/lib/reliability-report-json-s
 import type { ReportSource, ReliabilityProfile } from "@/types";
 import type { ResolvedSelectorContext } from "@/lib/selector-resolve";
 import { validateReliabilityProfile } from "@/lib/validate-reliability-profile";
+import { urlSegmentSlug } from "@/lib/url-segment-slug";
 
 /** Gemini API: Google Search grounding cannot be combined with controlled JSON (mime + schema). */
 const DEFAULT_MODEL = "gemini-2.5-flash";
@@ -72,6 +73,9 @@ const SCHEMA_HINT = JSON.stringify(RELIABILITY_PROFILE_JSON_SCHEMA, null, 2);
 
 function buildGroundedPrompt(ctx: ResolvedSelectorContext): string {
   const requestedYearLine = ctx.modelYear ? `- Requested model year: ${ctx.modelYear}` : "";
+  const selectedSeriesLine = ctx.selectedSeries
+    ? `- User-selected series/generation slug: ${ctx.selectedSeries}`
+    : "";
   return `You are summarizing real-world reliability for one vehicle generation for car buyers.
 
 Vehicle:
@@ -82,6 +86,7 @@ Vehicle:
 - Internal generation label: ${ctx.generationLabel}
 - Internal generation years field: ${ctx.years}
 ${requestedYearLine}
+${selectedSeriesLine}
 
 If internal generation label is generic (e.g. "All variants"), infer the likely generation/chassis context from retrieved sources for the requested model year and state uncertainty when sources conflict.
 
@@ -109,6 +114,9 @@ Avoid exact statistics, recall identifiers, and date claims unless those details
 
 function buildStructuredOnlyPrompt(ctx: ResolvedSelectorContext): string {
   const requestedYearLine = ctx.modelYear ? `- Requested model year: ${ctx.modelYear}` : "";
+  const selectedSeriesLine = ctx.selectedSeries
+    ? `- User-selected series/generation slug: ${ctx.selectedSeries}`
+    : "";
   return `You are summarizing real-world reliability for one vehicle generation for car buyers, using general automotive knowledge (no live web search).
 
 Vehicle:
@@ -119,6 +127,7 @@ Vehicle:
 - Internal generation label: ${ctx.generationLabel}
 - Internal generation years field: ${ctx.years}
 ${requestedYearLine}
+${selectedSeriesLine}
 
 yearsRange should match this generation and requested model year when present.
 
@@ -131,6 +140,122 @@ export type GenerateReportResult = {
   sources: ReportSource[];
   retrievalMode: "grounded" | "ungrounded";
 };
+
+export type SeriesCandidate = {
+  slug: string;
+  label: string;
+  years?: string;
+  sourceUris: string[];
+};
+
+export type GenerateSeriesCandidatesResult = {
+  candidates: SeriesCandidate[];
+  sources: ReportSource[];
+};
+
+function buildSeriesCandidatesPrompt(makeName: string, modelName: string, modelYear: number): string {
+  return `Identify possible vehicle series/generation entries for this request:
+- Make: ${makeName}
+- Model: ${modelName}
+- Model year: ${modelYear}
+- Market context: Australia
+
+Return JSON only using this exact schema:
+{
+  "candidates": [
+    {
+      "label": "string",
+      "years": "string (optional)"
+    }
+  ]
+}
+
+Rules:
+- Candidate must be a series/generation/chassis family (e.g. F22, G42), NOT trim or variant.
+- If uncertain, include multiple candidates rather than guessing.
+- Keep labels short and objective.
+- Do not include commentary or markdown fences.`;
+}
+
+function parseSeriesCandidatesJson(text: string): { label: string; years?: string }[] {
+  const raw = extractJsonObject(text);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw) as unknown;
+  } catch {
+    throw new Error("Gemini returned non-JSON series candidate text");
+  }
+  if (typeof parsed !== "object" || parsed === null) return [];
+  const candidates = (parsed as { candidates?: unknown }).candidates;
+  if (!Array.isArray(candidates)) return [];
+  const out: { label: string; years?: string }[] = [];
+  const seen = new Set<string>();
+  for (const item of candidates) {
+    if (typeof item !== "object" || item === null) continue;
+    const rec = item as Record<string, unknown>;
+    if (typeof rec.label !== "string" || rec.label.trim().length === 0) continue;
+    const label = rec.label.trim();
+    const slug = urlSegmentSlug(label);
+    if (seen.has(slug)) continue;
+    seen.add(slug);
+    out.push({
+      label,
+      years: typeof rec.years === "string" ? rec.years.trim() : undefined,
+    });
+  }
+  return out;
+}
+
+export async function generateSeriesCandidatesWithGrounding(
+  makeName: string,
+  modelName: string,
+  modelYear: number,
+): Promise<GenerateSeriesCandidatesResult> {
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is not set");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+  let lastError: unknown;
+
+  for (const model of modelCandidates()) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: buildSeriesCandidatesPrompt(makeName, modelName, modelYear),
+        config: {
+          temperature: 0.2,
+          tools: [{ googleSearch: {} }],
+        },
+      });
+      const text = response.text;
+      if (!text) continue;
+      const parsed = parseSeriesCandidatesJson(text);
+      const sources = extractSourcesFromResponse(
+        response as {
+          candidates?: { groundingMetadata?: { groundingChunks?: { web?: { title?: string; uri?: string } }[] } }[];
+        },
+      );
+      const out: SeriesCandidate[] = parsed.map((c) => ({
+        slug: urlSegmentSlug(c.label),
+        label: c.label,
+        years: c.years,
+        sourceUris: sources.map((s) => s.uri),
+      }));
+      if (out.length > 0) {
+        return { candidates: out, sources };
+      }
+    } catch (e) {
+      lastError = e;
+    }
+  }
+
+  if (lastError instanceof Error) {
+    throw lastError;
+  }
+  return { candidates: [], sources: [] };
+}
 
 export async function generateReliabilityReportWithGrounding(
   ctx: ResolvedSelectorContext,

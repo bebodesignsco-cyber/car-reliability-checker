@@ -1,6 +1,7 @@
 import { generateReliabilityReportWithGrounding } from "@/lib/generate-reliability-report";
 import { getProfileForSegments } from "@/lib/mock-profiles";
 import { isYearSegment } from "@/lib/model-year";
+import { resolveSeriesCandidates } from "@/lib/series-precheck";
 import {
   isReportStale,
   readCachedReport,
@@ -9,9 +10,18 @@ import {
 } from "@/lib/reliability-report-cache";
 import { resolveSelectorContext, type ResolvedSelectorContext } from "@/lib/selector-resolve";
 import type { CachedReliabilityReport, ReliabilityProfile } from "@/types";
+import type { SeriesCandidate } from "@/lib/generate-reliability-report";
 
 export type LoadReliabilityReportResult =
   | { kind: "ok"; report: CachedReliabilityReport; context: ResolvedSelectorContext }
+  | {
+      kind: "selection_required";
+      makeSlug: string;
+      modelSlug: string;
+      modelYear: number;
+      candidates: SeriesCandidate[];
+      resolutionMethod: "local_fallback" | "ai_grounded";
+    }
   | { kind: "not_found" }
   | { kind: "error"; message: string };
 
@@ -25,10 +35,10 @@ function cachedFromMock(profile: ReliabilityProfile): CachedReliabilityReport {
   };
 }
 
-function cacheSegment(segmentSlug: string, generationSlug: string, generationQuery?: string | null): string {
+function cacheSegment(segmentSlug: string, generationQuery?: string | null): string {
   if (!isYearSegment(segmentSlug)) return segmentSlug;
-  if (generationQuery && generationQuery === generationSlug) {
-    return `${segmentSlug}--${generationSlug}`;
+  if (generationQuery) {
+    return `${segmentSlug}--${generationQuery}`;
   }
   return segmentSlug;
 }
@@ -37,24 +47,61 @@ export async function loadReliabilityReport(
   makeSlug: string,
   modelSlug: string,
   segmentSlug: string,
-  generationQuery?: string | null,
+  seriesQuery?: string | null,
 ): Promise<LoadReliabilityReportResult> {
-  const ctx = resolveSelectorContext(makeSlug, modelSlug, segmentSlug, generationQuery);
+  let selectedSeries = seriesQuery ?? undefined;
+  let seriesResolutionMethod: ResolvedSelectorContext["seriesResolutionMethod"] | undefined;
+  let selectedSeriesLabel: string | undefined;
+  if (isYearSegment(segmentSlug)) {
+    const modelYear = Number(segmentSlug);
+    const precheck = await resolveSeriesCandidates(makeSlug, modelSlug, modelYear);
+    if (precheck.status === "multiple") {
+      const chosen = selectedSeries
+        ? precheck.candidates.find((c) => c.slug === selectedSeries)
+        : undefined;
+      if (!chosen) {
+        return {
+          kind: "selection_required",
+          makeSlug,
+          modelSlug,
+          modelYear,
+          candidates: precheck.candidates,
+          resolutionMethod: precheck.resolutionMethod,
+        };
+      }
+      selectedSeries = chosen.slug;
+      selectedSeriesLabel = chosen.label;
+      seriesResolutionMethod = precheck.resolutionMethod;
+    } else if (precheck.status === "single" && precheck.candidates[0]) {
+      selectedSeries = precheck.candidates[0].slug;
+      selectedSeriesLabel = precheck.candidates[0].label;
+      seriesResolutionMethod = precheck.resolutionMethod;
+    }
+  }
+
+  const ctx = resolveSelectorContext(makeSlug, modelSlug, segmentSlug, selectedSeries);
   if (!ctx) {
     return { kind: "not_found" };
   }
-  const keySegment = cacheSegment(segmentSlug, ctx.generationSlug, generationQuery);
+  const resolvedCtx: ResolvedSelectorContext = {
+    ...ctx,
+    generationLabel: selectedSeriesLabel ?? ctx.generationLabel,
+    selectedSeries,
+    seriesResolutionMethod,
+  };
+  const keySegment = cacheSegment(segmentSlug, selectedSeries);
 
   const cached = await readCachedReport(makeSlug, modelSlug, keySegment);
   const hasApiKey = Boolean(process.env.GEMINI_API_KEY?.trim());
 
   if (cached && !isReportStale(cached.generatedAt)) {
-    return { kind: "ok", report: { ...cached, staleServed: false }, context: ctx };
+    return { kind: "ok", report: { ...cached, staleServed: false }, context: resolvedCtx };
   }
 
   if (hasApiKey) {
     try {
-      const { profile, sources, retrievalMode } = await generateReliabilityReportWithGrounding(ctx);
+      const { profile, sources, retrievalMode } =
+        await generateReliabilityReportWithGrounding(resolvedCtx);
       const report: CachedReliabilityReport = {
         schemaVersion: REPORT_CACHE_SCHEMA_VERSION,
         generatedAt: new Date().toISOString(),
@@ -71,18 +118,18 @@ export async function loadReliabilityReport(
           cacheErr instanceof Error ? cacheErr.message : cacheErr,
         );
       }
-      return { kind: "ok", report, context: ctx };
+      return { kind: "ok", report, context: resolvedCtx };
     } catch (e) {
       if (cached) {
         return {
           kind: "ok",
           report: { ...cached, staleServed: true },
-          context: ctx,
+          context: resolvedCtx,
         };
       }
-      const mock = getProfileForSegments(makeSlug, modelSlug, ctx.generationSlug);
+      const mock = getProfileForSegments(makeSlug, modelSlug, resolvedCtx.generationSlug);
       if (mock) {
-        return { kind: "ok", report: cachedFromMock(mock), context: ctx };
+        return { kind: "ok", report: cachedFromMock(mock), context: resolvedCtx };
       }
       const detail = e instanceof Error ? e.message : String(e);
       console.error("[reliability] Gemini report generation failed:", detail);
@@ -99,12 +146,12 @@ export async function loadReliabilityReport(
   }
 
   if (cached) {
-    return { kind: "ok", report: { ...cached, staleServed: false }, context: ctx };
+    return { kind: "ok", report: { ...cached, staleServed: false }, context: resolvedCtx };
   }
 
-  const mock = getProfileForSegments(makeSlug, modelSlug, ctx.generationSlug);
+  const mock = getProfileForSegments(makeSlug, modelSlug, resolvedCtx.generationSlug);
   if (mock) {
-    return { kind: "ok", report: cachedFromMock(mock), context: ctx };
+    return { kind: "ok", report: cachedFromMock(mock), context: resolvedCtx };
   }
 
   return {

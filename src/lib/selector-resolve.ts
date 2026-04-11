@@ -13,6 +13,8 @@ export type ResolvedSelectorContext = {
   years: string;
   matchingGenerationSlugs: string[];
   isLegacyGenerationSegment: boolean;
+  selectedSeries?: string;
+  seriesResolutionMethod?: "local_fallback" | "ai_grounded";
 };
 
 export function resolveSelectorContext(

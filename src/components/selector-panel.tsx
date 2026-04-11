@@ -3,8 +3,21 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-import { listSelectableYearsForModel, resolveYearToGeneration } from "@/lib/model-year";
+import { listSelectableYearsForModel } from "@/lib/model-year";
 import { SELECTOR_TREE } from "@/lib/selector-data";
+
+type SeriesCandidate = {
+  slug: string;
+  label: string;
+  years?: string;
+  sourceUris: string[];
+};
+
+type SeriesPrecheckResponse = {
+  status: "single" | "multiple" | "none";
+  candidates: SeriesCandidate[];
+  resolutionMethod: "local_fallback" | "ai_grounded";
+};
 
 export function SelectorPanel() {
   const router = useRouter();
@@ -12,7 +25,11 @@ export function SelectorPanel() {
   const [makeSlug, setMakeSlug] = useState("");
   const [modelSlug, setModelSlug] = useState("");
   const [year, setYear] = useState("");
-  const [generationHint, setGenerationHint] = useState("");
+  const [seriesOptions, setSeriesOptions] = useState<SeriesCandidate[]>([]);
+  const [showSeriesPopup, setShowSeriesPopup] = useState(false);
+  const [precheckMethod, setPrecheckMethod] = useState<SeriesPrecheckResponse["resolutionMethod"] | null>(
+    null,
+  );
 
   const make = useMemo(
     () => SELECTOR_TREE.find((m) => m.slug === makeSlug),
@@ -23,49 +40,68 @@ export function SelectorPanel() {
     [make, modelSlug],
   );
   const availableYears = useMemo(() => (model ? listSelectableYearsForModel(model) : []), [model]);
-  const yearNumber = Number(year);
-  const yearResolution = useMemo(() => {
-    if (!model || year.length === 0 || !Number.isFinite(yearNumber)) return null;
-    return resolveYearToGeneration(model, yearNumber, generationHint || null);
-  }, [model, year, yearNumber, generationHint]);
-  const hasAmbiguousGenerations =
-    yearResolution?.kind === "matched" && yearResolution.matches.length > 1;
-  const hasNoMatch = year.length > 0 && yearResolution?.kind === "no_match";
-
-  const canSubmit = Boolean(
-    make &&
-      model &&
-      year.length > 0 &&
-      !hasNoMatch &&
-      (!hasAmbiguousGenerations || Boolean(generationHint)),
-  );
+  const canSubmit = Boolean(make && model && year.length > 0);
 
   function handleMakeChange(value: string) {
     setMakeSlug(value);
     setModelSlug("");
     setYear("");
-    setGenerationHint("");
+    setSeriesOptions([]);
+    setShowSeriesPopup(false);
+    setPrecheckMethod(null);
   }
 
   function handleModelChange(value: string) {
     setModelSlug(value);
     setYear("");
-    setGenerationHint("");
+    setSeriesOptions([]);
+    setShowSeriesPopup(false);
+    setPrecheckMethod(null);
   }
 
   function handleYearChange(value: string) {
     setYear(value);
-    setGenerationHint("");
+    setSeriesOptions([]);
+    setShowSeriesPopup(false);
+    setPrecheckMethod(null);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function routeToReport(seriesSlug?: string) {
+    const params = new URLSearchParams();
+    if (seriesSlug) params.set("series", seriesSlug);
+    const query = params.size > 0 ? `?${params.toString()}` : "";
+    router.push(`/${make!.slug}/${model!.slug}/${year}${query}`);
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit || isPending) return;
-    startTransition(() => {
-      const params = new URLSearchParams();
-      if (generationHint) params.set("generation", generationHint);
-      const query = params.size > 0 ? `?${params.toString()}` : "";
-      router.push(`/${make!.slug}/${model!.slug}/${year}${query}`);
+    const makeValue = make!.slug;
+    const modelValue = model!.slug;
+    const yearValue = year;
+    startTransition(async () => {
+      try {
+        const res = await fetch(
+          `/api/series-candidates?make=${encodeURIComponent(makeValue)}&model=${encodeURIComponent(modelValue)}&year=${encodeURIComponent(yearValue)}`,
+          { cache: "no-store" },
+        );
+        if (res.ok) {
+          const precheck = (await res.json()) as SeriesPrecheckResponse;
+          if (precheck.status === "multiple" && precheck.candidates.length > 1) {
+            setSeriesOptions(precheck.candidates);
+            setPrecheckMethod(precheck.resolutionMethod);
+            setShowSeriesPopup(true);
+            return;
+          }
+          if (precheck.status === "single" && precheck.candidates[0]) {
+            routeToReport(precheck.candidates[0].slug);
+            return;
+          }
+        }
+      } catch {
+        // Ignore API failures; route with year only.
+      }
+      routeToReport();
     });
   }
 
@@ -143,38 +179,6 @@ export function SelectorPanel() {
               ))}
             </select>
           </div>
-          {hasAmbiguousGenerations ? (
-            <div className="flex flex-col gap-3">
-              <label
-                htmlFor="select-generation-hint"
-                className="text-sm font-bold uppercase tracking-wide text-foreground"
-              >
-                4. OPTIONAL SERIES HINT
-              </label>
-              <select
-                id="select-generation-hint"
-                name="generationHint"
-                value={generationHint}
-                onChange={(e) => setGenerationHint(e.target.value)}
-                className="h-14 w-full border-2 border-foreground bg-background px-4 text-base font-medium text-foreground"
-              >
-                <option value="">Choose matching series</option>
-                {yearResolution?.kind === "matched"
-                  ? yearResolution.matches.map((g) => (
-                      <option key={g.slug} value={g.slug}>
-                        {g.label} ({g.years})
-                      </option>
-                    ))
-                  : null}
-              </select>
-            </div>
-          ) : null}
-          {hasNoMatch ? (
-            <p className="text-sm text-foreground/80">
-              This year is outside the listed range for this model. Choose another year, or use the
-              model hub for broader coverage.
-            </p>
-          ) : null}
         </div>
       </div>
 
@@ -193,6 +197,48 @@ export function SelectorPanel() {
           Used car reliability guides by make
         </Link>
       </p>
+      {showSeriesPopup ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-xl border-2 border-foreground bg-background p-6 sm:p-8">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-foreground">
+              Select series / generation (not trim level)
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-foreground/90">
+              Multiple series appear to match this model year. Choose the series you meant before
+              generating the final report.
+            </p>
+            {precheckMethod === "ai_grounded" ? (
+              <p className="mt-2 text-xs leading-relaxed text-foreground/80">
+                Options were derived from web-source grounding.
+              </p>
+            ) : null}
+            <ul className="mt-4 space-y-2" role="list">
+              {seriesOptions.map((candidate) => (
+                <li key={candidate.slug}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSeriesPopup(false);
+                      routeToReport(candidate.slug);
+                    }}
+                    className="w-full border-2 border-foreground bg-background px-4 py-3 text-left text-sm font-semibold text-foreground hover:bg-foreground hover:text-background"
+                  >
+                    {candidate.label}
+                    {candidate.years ? ` (${candidate.years})` : ""}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={() => setShowSeriesPopup(false)}
+              className="mt-4 w-full border-2 border-foreground bg-background px-4 py-3 text-xs font-bold uppercase tracking-wide text-foreground hover:bg-foreground hover:text-background"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : null}
     </form>
   );
 }

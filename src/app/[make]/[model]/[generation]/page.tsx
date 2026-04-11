@@ -27,7 +27,7 @@ export const maxDuration = 120;
 
 type PageProps = {
   params: Promise<{ make: string; model: string; generation: string }>;
-  searchParams: Promise<{ generation?: string }>;
+  searchParams: Promise<{ series?: string; generation?: string }>;
 };
 
 export async function generateMetadata({ params }: Pick<PageProps, "params">): Promise<Metadata> {
@@ -65,15 +65,54 @@ export async function generateMetadata({ params }: Pick<PageProps, "params">): P
 
 export default async function GenerationReliabilityPage({ params, searchParams }: PageProps) {
   const { make, model, generation } = await params;
-  const { generation: generationQuery } = await searchParams;
+  const { series, generation: legacyGeneration } = await searchParams;
 
   const adAfterTrust = process.env.NEXT_PUBLIC_ADSENSE_SLOT_IN_ARTICLE?.trim();
   const adMid = process.env.NEXT_PUBLIC_ADSENSE_SLOT_MID?.trim();
   const adFooter = process.env.NEXT_PUBLIC_ADSENSE_SLOT_FOOTER?.trim();
 
-  const loaded = await loadReliabilityReport(make, model, generation, generationQuery);
+  const loaded = await loadReliabilityReport(make, model, generation, series ?? legacyGeneration);
   if (loaded.kind === "not_found") {
     notFound();
+  }
+  if (loaded.kind === "selection_required") {
+    return (
+      <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6 sm:py-14 md:py-16">
+        <h1 className="text-lg font-bold uppercase leading-snug tracking-wide text-foreground sm:text-xl">
+          Select series / generation (not trim level)
+        </h1>
+        <p className="text-base leading-relaxed text-foreground">
+          Multiple series match {formatUrlSegment(make)} {formatUrlSegment(model)} model year{" "}
+          {loaded.modelYear}. Choose the series before generating the final report.
+        </p>
+        {loaded.resolutionMethod === "ai_grounded" ? (
+          <p className="text-sm leading-relaxed text-foreground/80">
+            These options were derived from AI grounding against web sources.
+          </p>
+        ) : null}
+        <ul className="space-y-3" role="list">
+          {loaded.candidates.map((c) => (
+            <li key={c.slug}>
+              <Link
+                href={`/${make}/${model}/${generation}?series=${c.slug}`}
+                className="block border-2 border-foreground bg-background px-4 py-3 text-base font-semibold text-foreground no-underline transition hover:bg-foreground hover:text-background"
+              >
+                {c.label}
+                {c.years ? ` (${c.years})` : ""}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p>
+          <Link
+            href="/"
+            className="inline-flex w-fit items-center border-2 border-foreground bg-background px-4 py-3 text-xs font-bold uppercase tracking-wide text-foreground no-underline hover:bg-foreground hover:text-background"
+          >
+            Back to selector
+          </Link>
+        </p>
+      </main>
+    );
   }
   if (loaded.kind === "error") {
     return (
@@ -173,7 +212,7 @@ export default async function GenerationReliabilityPage({ params, searchParams }
             {overlappingGenerations.map((g) => (
               <li key={g.slug}>
                 <Link
-                  href={`/${make}/${model}/${generation}?generation=${g.slug}`}
+                  href={`/${make}/${model}/${generation}?series=${g.slug}`}
                   className="underline underline-offset-4"
                 >
                   {g.label} ({g.years})

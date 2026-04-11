@@ -107,8 +107,14 @@ export function resolveYearToGeneration(
     return { kind: "matched", selected: preferred ?? matches[0]!, matches };
   }
 
-  if (parseable.length === 0 && isPlaceholderGenerationOnly(model.generations)) {
-    return { kind: "matched", selected: model.generations[0]!, matches: [] };
+  if (parseable.length === 0) {
+    const preferred = preferredGenerationSlug
+      ? model.generations.find((g) => g.slug === preferredGenerationSlug)
+      : undefined;
+    const selected = preferred ?? model.generations[0];
+    if (!selected) return { kind: "no_match", matches: [] };
+    const matches = isPlaceholderGenerationOnly(model.generations) ? [] : model.generations;
+    return { kind: "matched", selected, matches };
   }
 
   return { kind: "no_match", matches: [] };
