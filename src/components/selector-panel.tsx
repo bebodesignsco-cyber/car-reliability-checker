@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import { SearchableSelect } from "@/components/searchable-select";
 import { listSelectableYearsForModel } from "@/lib/model-year";
 import { SELECTOR_TREE } from "@/lib/selector-data";
 
@@ -41,6 +42,19 @@ export function SelectorPanel() {
   );
   const availableYears = useMemo(() => (model ? listSelectableYearsForModel(model) : []), [model]);
   const canSubmit = Boolean(make && model && year.length > 0);
+
+  const makeOptions = useMemo(
+    () => SELECTOR_TREE.map((m) => ({ value: m.slug, label: m.name })),
+    [],
+  );
+  const modelOptions = useMemo(
+    () => (make ? make.models.map((mo) => ({ value: mo.slug, label: mo.name })) : []),
+    [make],
+  );
+  const yearOptions = useMemo(
+    () => availableYears.map((y) => ({ value: String(y), label: String(y) })),
+    [availableYears],
+  );
 
   function handleMakeChange(value: string) {
     setMakeSlug(value);
@@ -116,20 +130,14 @@ export function SelectorPanel() {
             >
               1. SELECT MAKE
             </label>
-            <select
+            <SearchableSelect
               id="select-make"
               name="make"
               value={makeSlug}
-              onChange={(e) => handleMakeChange(e.target.value)}
-              className="h-14 w-full border-2 border-foreground bg-background px-4 text-base font-medium text-foreground"
-            >
-              <option value="">—</option>
-              {SELECTOR_TREE.map((m) => (
-                <option key={m.slug} value={m.slug}>
-                  {m.name}
-                </option>
-              ))}
-            </select>
+              onValueChange={handleMakeChange}
+              options={makeOptions}
+              searchPlaceholder="Search makes…"
+            />
           </div>
 
           <div className="flex flex-col gap-3">
@@ -139,21 +147,16 @@ export function SelectorPanel() {
             >
               2. SELECT MODEL
             </label>
-            <select
+            <SearchableSelect
+              key={makeSlug || "make"}
               id="select-model"
               name="model"
               value={modelSlug}
-              onChange={(e) => handleModelChange(e.target.value)}
+              onValueChange={handleModelChange}
+              options={modelOptions}
               disabled={!make}
-              className="h-14 w-full border-2 border-foreground bg-background px-4 text-base font-medium text-foreground disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <option value="">—</option>
-              {make?.models.map((mo) => (
-                <option key={mo.slug} value={mo.slug}>
-                  {mo.name}
-                </option>
-              ))}
-            </select>
+              searchPlaceholder="Search models…"
+            />
           </div>
 
           <div className="flex flex-col gap-3">
@@ -163,21 +166,16 @@ export function SelectorPanel() {
             >
               3. SELECT YEAR
             </label>
-            <select
+            <SearchableSelect
+              key={modelSlug || "model"}
               id="select-year"
               name="year"
               value={year}
-              onChange={(e) => handleYearChange(e.target.value)}
+              onValueChange={handleYearChange}
+              options={yearOptions}
               disabled={!model}
-              className="h-14 w-full border-2 border-foreground bg-background px-4 text-base font-medium text-foreground disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <option value="">—</option>
-              {availableYears.map((modelYear) => (
-                <option key={modelYear} value={String(modelYear)}>
-                  {modelYear}
-                </option>
-              ))}
-            </select>
+              searchPlaceholder="Search years…"
+            />
           </div>
         </div>
       </div>
